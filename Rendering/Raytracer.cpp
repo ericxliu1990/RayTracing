@@ -2,6 +2,7 @@
 #include "Rendering/Shading.h" 
 #include <FL/glu.h> 
 #include "Common/Common.h" 
+#include "Common/Matrix.h"
 
 Raytracer::Raytracer(){
 	_pixels = NULL; 
@@ -92,7 +93,8 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 
 	double bestt = FINF32;
 	Material* bestMat = NULL; 
-
+	Pt3 hitPoint;
+	Vec3 normal;
 	for(int j=0;j<_scene->getNumObjects();j++){
 		IsectData data;
 		Geometry* geom = _scene->getObject(j); 
@@ -102,16 +104,45 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 		if(data.hit){
 			if(data.t0<bestt){
 				bestt = data.t0;
-				bestMat = mat; 
+				bestMat = mat;
+				hitPoint = ray.at(data.t0);
+				normal = data.normal;
 			}
 		}
 	}
 
-
+	//cout<<"number of lights is "<<_scene->getNumLights()<<endl;
 	TraceResult res; 
 	res.color = Color(0.4f,0.4f,0.4f); 
-	if(bestt < FINF32)
-		res.color = _scene->getLight(0)->getAmbient() * bestMat->getAmbient();// bestMat->getDiffuse(); 
+	if(bestt < FINF32) {
+		// ambient
+		res.color = multiply(_scene->getLight(0)->getAmbient(),bestMat->getAmbient());
+		// diffuse and specular
+		Vec3 R = -2*(ray.dir*normal)*normal + ray.dir;
+		for (int i=0; i<_scene->getNumLights(); i++){
+			Vec3 L = _scene->getLight(i)->getPos()-hitPoint;
+			Ray shadowRay(hitPoint, L);
+			float scale = 1.0;
+			for(int j=0;j<_scene->getNumObjects();j++){
+				IsectData data;
+				Geometry* geom = _scene->getObject(j); 
+				Material* mat = _scene->getMaterial(geom); 
+				geom->accept(&_intersector,&data); 
+				if(data.hit){
+					if(data.t0<1.0){
+						scale *= mat->getTransparency();
+					}
+				}
+			}
+			L.normalize();
+			if (scale>0.001){
+				res.color += (L*normal)*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getDiffuse());
+				res.color += pow((L*R),bestMat->getSpecExponent())*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
+			}
+		}
 
+		// reflect
+		// refract
+	}
 	return res; 
 }
