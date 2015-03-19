@@ -83,6 +83,8 @@ bool Raytracer::draw(int step){
 	return (_last>=size); 
 }
 
+
+
 TraceResult Raytracer::trace(const Ray& ray, int depth){
 	// TODO: perform recursive tracing here
 	// TODO : perform proper illumination, shadowing, etc... 
@@ -109,7 +111,7 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 	TraceResult res; 
 	res.color = Color(0.4f,0.4f,0.4f); 
 	if(bestt < FINF32)
-		res.color = bestMat->getDiffuse(); 
+		res.color = _scene->getLight(0)->getAmbient() * bestMat->getAmbient();// bestMat->getDiffuse(); 
 
 	return res; 
 }
