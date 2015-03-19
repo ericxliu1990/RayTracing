@@ -115,34 +115,57 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 	TraceResult res; 
 	res.color = Color(0.4f,0.4f,0.4f); 
 	if(bestt < FINF32) {
-		// ambient
-		res.color = multiply(_scene->getLight(0)->getAmbient(),bestMat->getAmbient());
-		// diffuse and specular
 		Vec3 R = -2*(ray.dir*normal)*normal + ray.dir;
-		for (int i=0; i<_scene->getNumLights(); i++){
-			Vec3 L = _scene->getLight(i)->getPos()-hitPoint;
-			Ray shadowRay(hitPoint, L);
-			float scale = 1.0;
-			for(int j=0;j<_scene->getNumObjects();j++){
-				IsectData data;
-				Geometry* geom = _scene->getObject(j); 
-				Material* mat = _scene->getMaterial(geom); 
-				geom->accept(&_intersector,&data); 
-				if(data.hit){
-					if(data.t0<1.0){
-						scale *= mat->getTransparency();
+		res.color = Color(0.0f,0.0f,0.0f);
+		res.hit = true;
+		if (!ray.inside){
+			// ambient
+			res.color += multiply(_scene->getLight(0)->getAmbient(),bestMat->getAmbient());
+			// diffuse and specular
+			for (int i=0; i<_scene->getNumLights(); i++){
+				Vec3 L = _scene->getLight(i)->getPos()-hitPoint;
+				Ray shadowRay(hitPoint, L);
+				float scale = 1.0;
+				for(int j=0;j<_scene->getNumObjects();j++){
+					IsectData data;
+					Geometry* geom = _scene->getObject(j); 
+					Material* mat = _scene->getMaterial(geom); 
+					geom->accept(&_intersector,&data); 
+					if(data.hit){
+						if(data.t0<1.0){
+							scale *= mat->getTransparency();
+						}
 					}
 				}
-			}
-			L.normalize();
-			if (scale>0.001){
-				res.color += (L*normal)*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getDiffuse());
-				res.color += pow((L*R),bestMat->getSpecExponent())*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
+				L.normalize();
+				if (scale>0.001){
+					res.color += (L*normal)*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getDiffuse());
+					res.color += pow((L*R),bestMat->getSpecExponent())*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
+				}
 			}
 		}
-
-		// reflect
-		// refract
+		if (depth<2){
+			// reflect
+			R.normalize();
+			Ray reflectRay(hitPoint, R);
+			reflectRay.inside = ray.inside;
+			TraceResult reflectResult = trace(reflectRay,depth+1);
+			if (reflectResult.hit){
+				res.color += bestMat->getReflective()*reflectResult.color;
+			}
+			// refract
+			float c2c1 = (ray.inside ? bestMat->getRefractIndex() : 1.0/bestMat->getRefractIndex());
+			float cos2 = 1 - c2c1*c2c1*(1-pow((normal*ray.dir),2));
+			if (cos2>0){
+				Vec3 W = (-c2c1*(normal*ray.dir) - sqrt(cos2))*normal + c2c1 * ray.dir;
+				Ray refractRay(hitPoint, W);
+				refractRay.inside = !ray.inside;
+				TraceResult refractResult = trace(refractRay,depth+1);
+				if (refractResult.hit){
+					res.color += bestMat->getTransparency()*refractResult.color;
+				}
+			}
+		}
 	}
 	return res; 
 }

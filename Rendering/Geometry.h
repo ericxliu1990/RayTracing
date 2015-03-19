@@ -13,13 +13,15 @@ class Ray{
 public: 
 	Pt3 p; 
 	Vec3 dir; 
+	bool inside; // If ray is currently inside an object
 	Pt3 at(float t) const { return p+(dir*t); } 
 
-	Ray() : p(0,0,0), dir(1,0,0,0) {}; 
+	Ray() : p(0,0,0), dir(1,0,0,0), inside(false) {}; 
 
 	Ray(const Pt3& p, const Vec3& d) {
 		this->p = p;
 		this->dir = d; 
+		this->inside = false;
 	}
 }; 
 
