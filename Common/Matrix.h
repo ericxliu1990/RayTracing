@@ -471,6 +471,18 @@ public:
 		return sqrt(vec * vec);
 	}
 
+	friend Vector<Type, n> multiply(const Vector<Type, n> &u, const Vector<Type, n> &v){
+		assert(u.size == v.size && v.size==4);
+		
+		Vector<Type, n> res;
+		res[0] = u[0] * v[0];
+		res[1] = u[1] * v[1];
+		res[2] = u[2] * v[2];
+		res[3] = u[3] * v[3];
+
+		return res;
+	}
+	
 	friend Vector<Type, n> cross(const Vector<Type, n> &u, const Vector<Type, n> &v){
 		assert(u.size == v.size && v.size==4);
 		Vector<Type, n> res;
