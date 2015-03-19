@@ -26,3 +26,12 @@
 *.exe
 *.out
 *.app
+
+#VS 2010
+*.tlog
+*.sbr
+*.log
+*.bsc
+*.lastbuildstate
+*.pdb
+*.manifest
