@@ -8,7 +8,7 @@ PropertyWindow* PropertyWindow::_singleton = NULL;
 Operator* PropertyWindow::_op = NULL; 
 
 #define PW_WIDTH 350
-#define PW_HEIGHT 300
+#define PW_HEIGHT 250
 #define MW_HEIGHT 80
 
 MaterialColorButton::MaterialColorButton(int x, int y, const char* name)
@@ -251,10 +251,7 @@ PropertyWindow::PropertyWindow()
 	{
 		_matWindow = new MaterialWindow(5,sty); 
 	}
-	{
-		Button* deleteObject = new Button(5, sty + MW_HEIGHT + 5, 100, 20, "Delete Object");
-		
-	}
+
 	this->callback(escapeButtonCb,this); 
 
 	end(); 

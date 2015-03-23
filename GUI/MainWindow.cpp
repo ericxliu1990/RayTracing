@@ -61,6 +61,10 @@ MainWindow* MainWindow::_singleton = NULL;
 const int WIN_LOWER_SPACE = 0; 
 const int MENU_SPACE = 0;
 const double MOUSE_TOL = 8.f; 
+const int RIGHT_PANEL_WIDTH = 160;
+const int Button_SPACE = 5;
+const int Button_WIDTH = RIGHT_PANEL_WIDTH - Button_SPACE * 2;
+const int BUTTON_HEIGHT = 20;
 
 // this is the function to call if you need to update your scene view after some mouse or keyboard input
 void MainWindow::updateModelView(){
@@ -124,7 +128,8 @@ char* getChar(const std::string& s){
 	return c; 
 }
 
-MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : Fl_Window(x,y,w + 100,h+MENU_SPACE+WIN_LOWER_SPACE,l){
+MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : 
+Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 
 	show();
 
@@ -172,11 +177,52 @@ MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : Fl_Window(x,
 		_singleton = this; 
 	}
 
+	// the right panel, add objects and delete objects
 	begin();
-		Button* addObject = new Button(w, MENU_SPACE, 100, 20, "Add Sphere");
-		addObject->callback(addObjectCb);
-		Button* delectObject = new Button(w, MENU_SPACE + 25, 100, 20, "Delete Selected Object");
-		delectObject->callback(delObjectCb);
+
+	Button* addSphere = new Button(w + Button_SPACE, 
+									MENU_SPACE + Button_SPACE, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Sphere");
+	addSphere->callback(addObjectCb);
+
+	Button* addBox = new Button(w + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT + Button_SPACE * 2, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Box");
+	// addBox->callback(addObjectCb);
+
+
+	Button* addEllipsoid = new Button(w + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT * 2 + Button_SPACE * 3, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Ellipsoid");
+	// addEllipsoid->callback(addObjectCb);
+
+	Button* addCylinder = new Button(w + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT * 3 + Button_SPACE * 4, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Cylinder");
+	// addCylinder->callback(addObjectCb);
+
+	Button* addCone = new Button(w + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT * 4 + Button_SPACE * 5, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Cone");
+	// addCone->callback(addObjectCb);
+
+	Button* delectObject = new Button(w + Button_SPACE, 
+										MENU_SPACE + BUTTON_HEIGHT* 5  + Button_SPACE * 6, 
+										Button_WIDTH, 
+										BUTTON_HEIGHT, 
+										"Delete Selected Object");
+	delectObject->callback(delObjectCb);
+	
 	end();
 }
 
@@ -201,6 +247,7 @@ void MainWindow::saveFileMenuCb(Fl_Widget* widget, void* win){
 	if(window) 
 		window->saveFile(string(newfile));
 }
+
 /**
  * @brief callback funttion of add object button
  * @details add a default sphere to the scene
@@ -210,11 +257,13 @@ void MainWindow::saveFileMenuCb(Fl_Widget* widget, void* win){
 void MainWindow::addObjectCb(Fl_Widget* widget)
 {
 	Sphere* geom = new Sphere(); 
+	// default sphere
 	geom->setCenter(Pt3(0, 1, 0)); 
 	geom->setRadius(0.5f); 
 	getScene()->addObject(geom);
 
 	Material* mat = new Material(); 
+	// default material
 	mat->setAmbient(Pt3(0.5, 0.4, 0.95)); 
 	mat->setDiffuse(Pt3(0.5, 0.4, 0.95)); 
 	mat->setSpecular(Pt3(0.5, 0.5, 0.5)); 
@@ -245,7 +294,7 @@ void MainWindow::delObjectCb(Fl_Widget* widget)
 		PropertyWindow::closePropertyWindow(); 
 		cout << "Delete Object" << endl;
 	}
-
+	cout << "You Need select one object" << endl;
 }
 
 void MainWindow::prepScene(){
