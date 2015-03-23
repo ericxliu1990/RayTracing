@@ -113,6 +113,8 @@ protected:
 		Fl::repeat_timeout(REFRESH_RATE,MainWindow::updateCb,userdata);
 	}
 
+	static void addObjectCb(Fl_Widget* widget);
+	static void delObjectCb(Fl_Widget* widget);
 	static void prepScene(); 
 	static void openFile(const std::string& fname); 
 	static void saveFile(const std::string& fname); 

@@ -145,7 +145,7 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 			// shadows casting algorithm
 			for (int i=0; i<_scene->getNumLights(); i++){
 				Vec3 lightVec = _scene->getLight(i)->getPos() - hitPoint;
-				Ray shadowRay(hitPoint, L);
+				Ray shadowRay(hitPoint, lightVec);
 				float shadowFactor = 1.0f;
 				for(int j=0;j<_scene->getNumObjects();j++){
 					IsectData data;
@@ -159,7 +159,7 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 						}
 					}
 				}
-				L.normalize();
+				lightVec.normalize();
 				if (shadowFactor >= 0.001f){
 					res.color += (lightVec * normal) * shadowFactor * multiply(_scene->getLight(i)->getColor(), bestMat->getDiffuse());
 					res.color += pow((lightVec * reflectVec), bestMat->getSpecExponent()) * shadowFactor * multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());

@@ -5,6 +5,7 @@
 #include <fstream> 
 #include <sstream> 
 #include <iostream> 
+#include <algorithm>
 
 #include <FL/gl.h>
 
@@ -60,6 +61,30 @@ void writeString(ostream* stream, const string& s){
 	(*stream)<<s;
 }
 
+/**
+ * @brief delect geometry object
+ * @details delect the gemoetry object from the object vector and its material  
+ * 
+ * @param obj the gemotry object need to be deleted
+ */
+void Scene::deleteObject(Geometry* obj){
+	int pos = find(_objs.begin(), _objs.end(), obj) - _objs.begin();
+	if (pos < _objs.size())
+	{
+		cout << "find " << pos << endl;
+		deleteMaterial(obj);
+		_objs.erase(_objs.begin() + pos);
+	}
+}
+/**
+ * @brief delete material
+ * @details delete the material attached to the object
+ * 
+ * @param obj the object need to remove material
+ */
+void Scene::deleteMaterial(Geometry* obj){
+	_mats.erase(obj);
+}
 
 bool SceneUtils::writeScene(const std::string& fname, Scene* scene){
 	std::ofstream fout(fname.c_str()); 

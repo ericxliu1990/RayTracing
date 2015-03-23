@@ -1,5 +1,6 @@
 #include "GUI/MainWindow.h" 
-#include "GUI/PropertyWindow.h" 
+#include "GUI/PropertyWindow.h"  
+#include "Button.h"
 #include <time.h>
 #include <iostream> 
 #include <sstream> 
@@ -123,7 +124,8 @@ char* getChar(const std::string& s){
 	return c; 
 }
 
-MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : Fl_Window(x,y,w,h+MENU_SPACE+WIN_LOWER_SPACE,l){
+MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : Fl_Window(x,y,w + 100,h+MENU_SPACE+WIN_LOWER_SPACE,l){
+
 	show();
 
 	begin();
@@ -157,7 +159,7 @@ MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : Fl_Window(x,
 	_intersector = new Intersector(); 
 	_rtviewer = new RaytraceViewer(100,100,w,h,"Raytracer"); 
 	// Use a smaller window to trace out a smaller picture can be much faster.  Good for testing purpose.
-	//_rtviewer = new RaytraceViewer(100,100,400,400,"Raytracer"); 
+	// _rtviewer = new RaytraceViewer(100,100,400,400,"Raytracer"); 
 
 	this->callback(escapeButtonCb,this);
 	Fl::repeat_timeout(REFRESH_RATE,MainWindow::updateCb,this);
@@ -169,6 +171,13 @@ MainWindow::MainWindow(int x, int y, int w, int h, const char* l) : Fl_Window(x,
 		MainWindow::init(); 
 		_singleton = this; 
 	}
+
+	begin();
+		Button* addObject = new Button(w, MENU_SPACE, 100, 20, "Add Sphere");
+		addObject->callback(addObjectCb);
+		Button* delectObject = new Button(w, MENU_SPACE + 25, 100, 20, "Delete Selected Object");
+		delectObject->callback(delObjectCb);
+	end();
 }
 
 void MainWindow::exitMenuCb(Fl_Widget* widget, void* win){
@@ -192,7 +201,52 @@ void MainWindow::saveFileMenuCb(Fl_Widget* widget, void* win){
 	if(window) 
 		window->saveFile(string(newfile));
 }
+/**
+ * @brief callback funttion of add object button
+ * @details add a default sphere to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addObjectCb(Fl_Widget* widget)
+{
+	Sphere* geom = new Sphere(); 
+	geom->setCenter(Pt3(0, 1, 0)); 
+	geom->setRadius(0.5f); 
+	getScene()->addObject(geom);
 
+	Material* mat = new Material(); 
+	mat->setAmbient(Pt3(0.5, 0.4, 0.95)); 
+	mat->setDiffuse(Pt3(0.5, 0.4, 0.95)); 
+	mat->setSpecular(Pt3(0.5, 0.5, 0.5)); 
+	mat->setSpecExponent(5.0f); 
+	mat->setReflective(0.5f); 
+	mat->setTransparency(0.1f); 
+	mat->setRefractIndex(1.6f); 
+	getScene()->attachMaterial(geom,mat); 
+	cout << "Add a Sphere" << endl;
+	prepScene();
+}
+/**
+ * @brief callback funtion of delete button
+ * @details delete the selected object from the scene
+ * 
+ * @param widget require first parameter
+ */
+void MainWindow::delObjectCb(Fl_Widget* widget)
+{
+	if(_zbuffer->getSelected())
+	{
+		// get the selected object and delect it
+		getScene()->deleteObject(_zbuffer->getSelected());
+		//clear operator and close the property window
+		_zbuffer->getOperator()->setState(OP_NONE);
+		_zbuffer->setSelected(NULL); 
+		_zbuffer->setOperator(NULL,0); 
+		PropertyWindow::closePropertyWindow(); 
+		cout << "Delete Object" << endl;
+	}
+
+}
 
 void MainWindow::prepScene(){
 	if(_scene){
