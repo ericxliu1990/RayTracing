@@ -4,6 +4,8 @@
 #include "Common/Common.h" 
 #include "Common/Matrix.h"
 
+#define MAX_DEPTH 2
+
 Raytracer::Raytracer(){
 	_pixels = NULL; 
 }
@@ -55,7 +57,15 @@ Pt3 Raytracer::unproject(const Pt3& p){
 
 	return ret;
 }
-
+/**
+ * @brief Perform Raytracing on every pixel on the screen
+ * @details Coveret every pixel on the screen to the world coordinate 
+ * and perform raytracing on it. To provent long tracing waiting time 
+ * we seperate the total pixels into array with step length.
+ * 	
+ * @param step the lengh pixels that one function call need to perform.
+ * @return wheather it finishs all the pixels on the screen
+ */
 bool Raytracer::draw(int step){
 	int size = _width*_height; 
 
@@ -83,9 +93,17 @@ bool Raytracer::draw(int step){
 	_last = j; 
 	return (_last>=size); 
 }
-
-
-
+/**
+ * @brief Recursive trace one ray.
+ * @details Ray trace scenes containing any number of light sources
+ * and spheres. Implement the ray tracing illumination model and shadow 
+ * effects, reflection, refaction, transparency for spheres.
+ * 
+ * @param ray the ray need to trace
+ * @param depth the depth of funtion calls, start with 0
+ * 
+ * @return ray tracing results
+ */
 TraceResult Raytracer::trace(const Ray& ray, int depth){
 	// TODO: perform recursive tracing here
 	// TODO : perform proper illumination, shadowing, etc... 
@@ -95,14 +113,16 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 	Material* bestMat = NULL; 
 	Pt3 hitPoint;
 	Vec3 normal;
-	for(int j=0;j<_scene->getNumObjects();j++){
+	//iterate all objects in the scene
+	for(int j = 0; j<_scene->getNumObjects(); j++){
 		IsectData data;
 		Geometry* geom = _scene->getObject(j); 
 		Material* mat = _scene->getMaterial(geom); 
-		geom->accept(&_intersector,&data); 
+		geom->accept(&_intersector, &data); 
 
+		//find the first hit object
 		if(data.hit){
-			if(data.t0<bestt){
+			if(data.t0 < bestt){
 				bestt = data.t0;
 				bestMat = mat;
 				hitPoint = ray.at(data.t0);
@@ -115,54 +135,57 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 	TraceResult res; 
 	res.color = Color(0.4f,0.4f,0.4f); 
 	if(bestt < FINF32) {
-		Vec3 R = -2*(ray.dir*normal)*normal + ray.dir;
+		Vec3 reflectVec = -2*(ray.dir*normal)*normal + ray.dir;
 		res.color = Color(0.0f,0.0f,0.0f);
 		res.hit = true;
 		if (!ray.inside){
 			// ambient
 			res.color += multiply(_scene->getLight(0)->getAmbient(),bestMat->getAmbient());
 			// diffuse and specular
+			// shadows casting algorithm
 			for (int i=0; i<_scene->getNumLights(); i++){
-				Vec3 L = _scene->getLight(i)->getPos()-hitPoint;
+				Vec3 lightVec = _scene->getLight(i)->getPos() - hitPoint;
 				Ray shadowRay(hitPoint, L);
-				float scale = 1.0;
+				float shadowFactor = 1.0f;
 				for(int j=0;j<_scene->getNumObjects();j++){
 					IsectData data;
 					Geometry* geom = _scene->getObject(j); 
 					Material* mat = _scene->getMaterial(geom); 
 					geom->accept(&_intersector,&data); 
 					if(data.hit){
-						if(data.t0<1.0){
-							scale *= mat->getTransparency();
+						// Test if the intersector is in the range of hitpoint and light source
+						if(data.t0 < 1.0f){
+							shadowFactor *= mat->getTransparency();
 						}
 					}
 				}
 				L.normalize();
-				if (scale>0.001){
-					res.color += (L*normal)*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getDiffuse());
-					res.color += pow((L*R),bestMat->getSpecExponent())*scale*multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
+				if (shadowFactor >= 0.001f){
+					res.color += (lightVec * normal) * shadowFactor * multiply(_scene->getLight(i)->getColor(), bestMat->getDiffuse());
+					res.color += pow((lightVec * reflectVec), bestMat->getSpecExponent()) * shadowFactor * multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
 				}
 			}
 		}
-		if (depth<2){
+		if (depth < MAX_DEPTH){
 			// reflect
-			R.normalize();
-			Ray reflectRay(hitPoint, R);
+			reflectVec.normalize();
+			Ray reflectRay(hitPoint, reflectVec);
 			reflectRay.inside = ray.inside;
-			TraceResult reflectResult = trace(reflectRay,depth+1);
+			TraceResult reflectResult = trace(reflectRay, depth + 1);
 			if (reflectResult.hit){
-				res.color += bestMat->getReflective()*reflectResult.color;
+				res.color += bestMat->getReflective() * reflectResult.color;
 			}
 			// refract
-			float c2c1 = (ray.inside ? bestMat->getRefractIndex() : 1.0/bestMat->getRefractIndex());
-			float cos2 = 1 - c2c1*c2c1*(1-pow((normal*ray.dir),2));
-			if (cos2>0){
-				Vec3 W = (-c2c1*(normal*ray.dir) - sqrt(cos2))*normal + c2c1 * ray.dir;
+			float c2c1 = (ray.inside ? bestMat->getRefractIndex() : 1.0 / bestMat->getRefractIndex());
+			float cos2 = 1 - c2c1 * c2c1 * (1 - pow((normal * ray.dir), 2));
+			//Check for total reflection
+			if (cos2 > 0){
+				Vec3 W = (-c2c1 * (normal * ray.dir) - sqrt(cos2)) * normal + c2c1 * ray.dir;
 				Ray refractRay(hitPoint, W);
 				refractRay.inside = !ray.inside;
-				TraceResult refractResult = trace(refractRay,depth+1);
+				TraceResult refractResult = trace(refractRay, depth + 1);
 				if (refractResult.hit){
-					res.color += bestMat->getTransparency()*refractResult.color;
+					res.color += bestMat->getTransparency() * refractResult.color;
 				}
 			}
 		}

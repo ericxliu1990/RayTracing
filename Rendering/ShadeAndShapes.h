@@ -188,7 +188,7 @@ public:
 struct IsectData{
 	// you can add more to this struct
 	bool hit; 
-	double t0; 
+	double t0; // the parameterized value of the interection
 	double t1;
 	Vec3 normal; 
 }; 

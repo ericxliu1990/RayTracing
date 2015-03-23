@@ -65,6 +65,13 @@ void Ellipsoid::rotate(double d, int axis) {}
 // definition of the sphere can be pretty sparse.  You don't need to define the transform associated with a sphere.
 void Sphere::updateTransform() {}
 
+/**
+ * @brief calculate the first interction between a ray and a sphere
+ * @details implement the algorithm in the book
+ * 
+ * @param sphere a sphere
+ * @param ret the result struct of intersection
+ */
 void Intersector::visit(Sphere* sphere, void* ret){
 	// TODO: rewrite this as described in the textbook
 	IsectData* iret = (IsectData*) ret; 
@@ -89,7 +96,6 @@ void Intersector::visit(Sphere* sphere, void* ret){
 		iret->normal.normalize(); 
 	}
 }
-
 
 // The updateTransform functions should properly set up the transformation of this geometry.
 // The transformation takes a unit shape into the shape described by the parameters.
