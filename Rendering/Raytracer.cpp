@@ -4,7 +4,7 @@
 #include "Common/Common.h" 
 #include "Common/Matrix.h"
 
-#define MAX_DEPTH 2
+#define MAX_DEPTH 4
 
 Raytracer::Raytracer(){
 	_pixels = NULL; 

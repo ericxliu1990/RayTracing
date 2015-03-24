@@ -362,7 +362,7 @@ MainWindow::~MainWindow(){}
  
 void MainWindow::resize(int x0, int y0, int w, int h){
 	Fl_Window::resize(x0,y0,w,h); 
-	_w = w; 
+	_w = w - RIGHT_PANEL_WIDTH; 
 	_h = h-(WIN_LOWER_SPACE+MENU_SPACE); 
 
 	glViewport(0,0,_w,_h);
