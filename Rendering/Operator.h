@@ -13,14 +13,6 @@ public:
 	}
 }; 
 
-#define OP_NONE 0
-#define OP_TRANSLATE 1
-#define OP_ROTATE 2
-#define OP_XAXIS 4
-#define OP_YAXIS 8
-#define OP_ZAXIS 16
-#define OP_STEP .25f
-
 class Operator : public Geometry{
 protected: 
 	//it should be a list of operands instead of hard coding two, probably

@@ -8,6 +8,13 @@
 #define EPS32 1e-6
 #define EPS 1e-6
 
+#define OP_NONE 0
+#define OP_TRANSLATE 1
+#define OP_ROTATE 2
+#define OP_XAXIS 4
+#define OP_YAXIS 8
+#define OP_ZAXIS 16
+#define OP_STEP .25f
 
 class Ray{
 public: 
@@ -91,7 +98,8 @@ public:
 	static double rayRayDist(const Ray& r1, const Ray& r2); 
 	static double lineSegRayDist(const Vec3& p0, const Vec3& p1, const Ray& r); 
 	static double planeRay(const Plane& pl, const Ray& r); 
-	static double planeRayDeg(const Plane& pl, const Vec3& xa, const Ray& r); 
+	static double planeRayDeg(const Plane& pl, const Vec3& xa, const Ray& r);
+	static std::auto_ptr<Mat4> getRotateMatrix(const double d, const int axis);
 };
 
 #endif

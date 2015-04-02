@@ -8,7 +8,9 @@ void Sphere::translate(const Vec3& trans){
 }
 
 // rotate a sphere has no effect
-void Sphere::rotate(double r, int axis){}
+void Sphere::rotate(double r, int axis){
+
+}
 
 void Box::translate(const Vec3& trans){
 	_corner+=trans;
@@ -18,40 +20,17 @@ void Box::translate(const Vec3& trans){
 void Box::rotate(double d, int axis){ 
 	// the rotation code for the other objects should look very similar.
 	// first construct a rotation about x/y/z axis
-
-	Mat4 m; 
-	switch(axis){
-		case OP_XAXIS: 
-			m[1][1] = cos(d); 
-			m[1][2] = -sin(d); 
-			m[2][1] = sin(d); 
-			m[2][2] = cos(d); 
-			break; 
-		case OP_YAXIS: 
-			m[0][0] = cos(d); 
-			m[0][2] = sin(d); 
-			m[2][0] = -sin(d); 
-			m[2][2] = cos(d); 
-			break; 
-		case OP_ZAXIS: 
-			m[0][0] = cos(d); 
-			m[0][1] = -sin(d); 
-			m[1][0] = sin(d); 
-			m[1][1] = cos(d); 
-			break; 
-		default: 
-			break; 
-	}
-
+	std::auto_ptr<Mat4> m;
+	m =  GeometryUtils::getRotateMatrix(d, axis);
 	Vec3 cv = _corner - _center; 
 
 	// rotate the three linearly independent vectors that determine the shape
-	_lengthv = _lengthv*m;
-	_widthv = _widthv*m;
-	_heightv = _heightv*m;
+	_lengthv = _lengthv * (*m);
+	_widthv = _widthv * (*m);
+	_heightv = _heightv * (*m);
 
 	// rotation is about the center, so points that are not the center will also be rotated; 
-	_corner = _center + (cv*m); 
+	_corner = _center + (cv * (*m)); 
 
 	updateTransform(); 
 }
@@ -61,19 +40,42 @@ void Cylinder::translate(const Vec3& trans) {
 	updateTransform();
 }
 void Cylinder::rotate(double d, int axis) {
+	std::auto_ptr<Mat4> m;
+	m =  GeometryUtils::getRotateMatrix(d, axis);
 
+	_baseAxis1 = _baseAxis1 * (*m);
+	_baseAxis2 = _baseAxis2 * (*m);
+	_centerAxis = _centerAxis * (*m);
+
+	updateTransform(); 
 }
 void Cone::translate(const Vec3& trans) {
 	_baseCenter+=trans;
 	updateTransform();
 }
-void Cone::rotate(double d, int axis) {}
+void Cone::rotate(double d, int axis) {
+	std::auto_ptr<Mat4> m;
+	m =  GeometryUtils::getRotateMatrix(d, axis);
+
+	_baseAxis1 = _baseAxis1 * (*m);
+	_baseAxis2 = _baseAxis2 * (*m);
+	_centerAxis = _centerAxis * (*m);
+
+	updateTransform(); 
+}
 void Ellipsoid::translate(const Vec3& trans) {
 	_center+=trans;
 	updateTransform();
 }
 void Ellipsoid::rotate(double d, int axis) {
+	std::auto_ptr<Mat4> m;
+	m =  GeometryUtils::getRotateMatrix(d, axis);
 
+	_axis1 = _axis1 * (*m);
+	_axis2 = _axis2 * (*m);
+	_axis3 = _axis3 * (*m);
+
+	updateTransform(); 
 }
 
 // definition of the sphere can be pretty sparse.  
@@ -248,8 +250,8 @@ void Intersector::visit(Ellipsoid* op, void* ret){
 
 void Cylinder::updateTransform() {
 	_mat = compose(_baseAxis1 * _lenAxis1, _baseAxis2 * _lenAxis2, _centerAxis * _height, _baseCenter);
-	debugInfo(_centerAxis.toString());
-	debugInfo(_mat.toString());
+	// debugInfo(_centerAxis.toString());
+	// debugInfo(_mat.toString());
 	_imat = !_mat;
 	Geometry::updateTransform();
 }

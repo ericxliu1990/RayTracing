@@ -52,4 +52,30 @@ double GeometryUtils::planeRayDeg(const Plane& pl, const Vec3& xa, const Ray& r)
 	//return r<0 ? r+M_PI : r; 
 	return rr<0 ? (rr+2*M_PI) : rr; 
 }
-
+std::auto_ptr<Mat4> GeometryUtils::getRotateMatrix(const double d, const int axis){
+	
+	std::auto_ptr<Mat4> m(new Mat4);
+	switch(axis){
+		case OP_XAXIS: 
+			(*m)[1][1] = cos(d); 
+			(*m)[1][2] = -sin(d); 
+			(*m)[2][1] = sin(d); 
+			(*m)[2][2] = cos(d); 
+			break; 
+		case OP_YAXIS: 
+			(*m)[0][0] = cos(d); 
+			(*m)[0][2] = sin(d); 
+			(*m)[2][0] = -sin(d); 
+			(*m)[2][2] = cos(d); 
+			break; 
+		case OP_ZAXIS: 
+			(*m)[0][0] = cos(d); 
+			(*m)[0][1] = -sin(d); 
+			(*m)[1][0] = sin(d); 
+			(*m)[1][1] = cos(d); 
+			break; 
+		default: 
+			break; 
+	}
+	return m;
+}
