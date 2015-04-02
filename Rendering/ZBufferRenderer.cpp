@@ -212,7 +212,7 @@ void ZBufferVisitor::visit(Cylinder* op, void* ret){
 	glPushMatrix();
 	glMultMatrixf(op->getGLForwardMat()); 
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	gluCylinder(_quadric, 1.0f, 0.0f, 1.0f, 50, 50); 
+	glutSolidCylinder(1.0f, 1.0f, 50, 50); 
 	glPopMatrix();
 }
 
@@ -222,7 +222,7 @@ void ZBufferVisitor::visit(Cone* op, void* ret){
 	glPushMatrix();
 	glMultMatrixf(op->getGLForwardMat()); 
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	gluCylinder(_quadric, 1.0f, 0.0f, 1.0f, 50, 50); 
+	glutSolidCone(1.0f, 1.0f, 50, 50); 
 	glPopMatrix();
 }
 

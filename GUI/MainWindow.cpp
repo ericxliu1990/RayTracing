@@ -331,7 +331,7 @@ void MainWindow::addCylinderCb(Fl_Widget* widget)
 						Vec3(1.0f, 0.0f, 0.0f),
 						Vec3(0.0f, 1.0f, 0.0f),
 						Vec3(0.0f, 0.0f, 1.0f),
-						1.0f, 1.0f, 1.0f);
+						0.5f, 1.0f, 0.5f);
 	getScene()->addObject(geom);
 	getScene()->attachMaterial(geom); 
 	debugInfo("Add" + geom->toString());

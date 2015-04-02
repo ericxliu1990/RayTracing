@@ -230,6 +230,7 @@ public:
 		_baseAxis2 = baseAxis2;
 		_lenAxis1 = lenAxis1;
 		_lenAxis2 = lenAxis2;
+		_centerAxis = centerAxis;
 		_height = height;
 		updateTransform(); 
 	};
