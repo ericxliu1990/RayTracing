@@ -241,7 +241,49 @@ void Ellipsoid::updateTransform() {
 	Geometry::updateTransform();
 }
 void Intersector::visit(Ellipsoid* op, void* ret){
+	// TODO: rewrite this as described in the textbook
+	IsectData* iret = (IsectData*) ret; 
 
+	// Intersect transformed line with canonical sphere
+	// Note that the vector of the trasformed line is normalized
+	Pt3 np = _ray.p*op->getInverseMat(); 
+	Pt3 ppp = np*(1/np[3]); 
+	Vec3 vvv = _ray.dir*op->getInverseMat(); 
+	double sizev = sqrt(vvv*vvv);
+	vvv.normalize();
+	Ray ray(ppp,vvv); 
+
+	Pt3 center(0,0,0); 
+	double closest = GeometryUtils::pointRayClosest(center,ray); 
+    Vec3 C2P = ray.at(closest) - center; 
+	double d2 = C2P*C2P; 
+
+	if(d2 > 1 + EPS){
+        iret->hit = false; 
+		iret->t0 = 0; 
+		return;
+	}
+	else{
+		double h = sqrt(1 - d2); 
+		if (closest+h<0){
+			iret->hit = false;
+			return;
+		} else if (closest-h<0.001){
+			iret->t0 = closest+h; 
+			iret->hit = true;
+		} else {
+			iret->t0 = closest-h; 
+			iret->hit = true; 
+		}
+		iret->normal = (ray.at(iret->t0) - center); 
+		iret->normal.normalize(); 
+	}
+
+	// In reality, the hit point t0 is adjusted for the size of vvv
+	iret->t0 /= sizev;
+	// In reality, the normal is adjusted to be in the right frame
+	iret->normal = iret->normal * transpose(op->getInverseMat());
+	iret->normal.normalize();
 }
 
 void Cylinder::updateTransform() {
