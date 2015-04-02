@@ -122,7 +122,7 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 
 		//find the first hit object
 		if(data.hit){
-			if(data.t0 < bestt){
+			if(data.t0 < bestt  && data.t0 > 0.001){
 				bestt = data.t0;
 				bestMat = mat;
 				hitPoint = ray.at(data.t0);
@@ -131,9 +131,12 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 		}
 	}
 
-	//cout<<"number of lights is "<<_scene->getNumLights()<<endl;
 	TraceResult res; 
-	res.color = Color(0.4f,0.4f,0.4f); 
+	if (depth==0){
+		res.color = Color(0.4f,0.4f,0.4f); 
+	} else {
+		res.color = Color(0.0f, 0.0f, 0.0f);
+	}
 	if(bestt < FINF32) {
 		Vec3 reflectVec = -2*(ray.dir*normal)*normal + ray.dir;
 		res.color = Color(0.0f,0.0f,0.0f);
@@ -145,8 +148,11 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 			// shadows casting algorithm
 			for (int i=0; i<_scene->getNumLights(); i++){
 				Vec3 lightVec = _scene->getLight(i)->getPos() - hitPoint;
+				double dist2Source = sqrt(lightVec * lightVec);
+				lightVec.normalize();
 				Ray shadowRay(hitPoint, lightVec);
 				float shadowFactor = 1.0f;
+				_intersector.setRay(shadowRay);
 				for(int j=0;j<_scene->getNumObjects();j++){
 					IsectData data;
 					Geometry* geom = _scene->getObject(j); 
@@ -154,10 +160,10 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 					geom->accept(&_intersector,&data); 
 					if(data.hit){
 						// Test if the intersector is in the range of hitpoint and light source
-						if(data.t0 < 1.0f){
+						if(data.t0>0.001 && data.t0 < dist2Source){
 							shadowFactor *= mat->getTransparency();
 						}
-					}
+					} 
 				}
 				lightVec.normalize();
 				if (shadowFactor >= 0.001f){
@@ -165,9 +171,12 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 					res.color += pow((lightVec * reflectVec), bestMat->getSpecExponent()) * shadowFactor * multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
 				}
 			}
-		}
+		} 
 		if (depth < MAX_DEPTH){
-			// reflect
+			if ( ray.inside) {
+				normal = -normal;
+			}
+			//reflect
 			reflectVec.normalize();
 			Ray reflectRay(hitPoint, reflectVec);
 			reflectRay.inside = ray.inside;
