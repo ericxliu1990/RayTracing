@@ -72,7 +72,9 @@ void Ellipsoid::translate(const Vec3& trans) {
 	_center+=trans;
 	updateTransform();
 }
-void Ellipsoid::rotate(double d, int axis) {}
+void Ellipsoid::rotate(double d, int axis) {
+
+}
 
 // definition of the sphere can be pretty sparse.  
 //You don't need to define the transform associated with a sphere.
@@ -246,6 +248,8 @@ void Intersector::visit(Ellipsoid* op, void* ret){
 
 void Cylinder::updateTransform() {
 	_mat = compose(_baseAxis1 * _lenAxis1, _baseAxis2 * _lenAxis2, _centerAxis * _height, _baseCenter);
+	debugInfo(_centerAxis.toString());
+	debugInfo(_mat.toString());
 	_imat = !_mat;
 	Geometry::updateTransform();
 }
