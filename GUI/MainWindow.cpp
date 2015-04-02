@@ -54,6 +54,7 @@ Intersector* MainWindow::_intersector = NULL;
 std::map<Geometry*,Operator*> MainWindow::_geom2op; 
 int MainWindow::_inputMode = INPUT_VIEWING; 
 Geometry* MainWindow::_highlighted = NULL; 
+Light* MainWindow::_lightHighlighted = NULL; 
 
 RaytraceViewer* MainWindow::_rtviewer = NULL; 
 MainWindow* MainWindow::_singleton = NULL; 
@@ -181,14 +182,14 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 	begin();
 
 	Button* addSphere = new Button(w + Button_SPACE, 
-									MENU_SPACE + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT * 1 + Button_SPACE * 2,
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Sphere");
 	addSphere->callback(addSphereCb);
 
 	Button* addBox = new Button(w + Button_SPACE, 
-									MENU_SPACE + BUTTON_HEIGHT + Button_SPACE * 2, 
+									MENU_SPACE + BUTTON_HEIGHT * 2 + Button_SPACE * 3, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Box");
@@ -196,28 +197,35 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 
 
 	Button* addEllipsoid = new Button(w + Button_SPACE, 
-									MENU_SPACE + BUTTON_HEIGHT * 2 + Button_SPACE * 3, 
+									MENU_SPACE + BUTTON_HEIGHT * 3 + Button_SPACE * 4, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Ellipsoid");
 	addEllipsoid->callback(addEllipsoidCb);
 
 	Button* addCylinder = new Button(w + Button_SPACE, 
-									MENU_SPACE + BUTTON_HEIGHT * 3 + Button_SPACE * 4, 
+									MENU_SPACE + BUTTON_HEIGHT * 4 + Button_SPACE * 5, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Cylinder");
 	addCylinder->callback(addCylinderCb);
 
 	Button* addCone = new Button(w + Button_SPACE, 
-									MENU_SPACE + BUTTON_HEIGHT * 4 + Button_SPACE * 5, 
+									MENU_SPACE + BUTTON_HEIGHT * 5 + Button_SPACE * 6, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Cone");
 	addCone->callback(addConeCb);
-	
+
+	Button* addTorus = new Button(w + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT * 6 + Button_SPACE * 7, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Torus");
+	addTorus->callback(addConeCb);
+
 	_selectButton = new Fl_Menu_Button(w + Button_SPACE,
-										MENU_SPACE + BUTTON_HEIGHT* 5  + Button_SPACE * 6, 
+										MENU_SPACE + BUTTON_HEIGHT* 7  + Button_SPACE * 8, 
 										Button_WIDTH,
 										BUTTON_HEIGHT,
 										"Selected");
@@ -229,18 +237,49 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 
 
 	Button* openPropertyWindow = new Button(w + Button_SPACE, 
-										MENU_SPACE + BUTTON_HEIGHT* 6  + Button_SPACE * 7, 
+										MENU_SPACE + BUTTON_HEIGHT* 8  + Button_SPACE * 9, 
 										Button_WIDTH, 
 										BUTTON_HEIGHT, 
 										"Open Property Window");
 	openPropertyWindow->callback(openPropertyCb);
 
 	Button* delectObject = new Button(w + Button_SPACE, 
-										MENU_SPACE + BUTTON_HEIGHT* 7  + Button_SPACE * 8, 
+										MENU_SPACE + BUTTON_HEIGHT* 9  + Button_SPACE * 10, 
 										Button_WIDTH, 
 										BUTTON_HEIGHT, 
 										"Delete Selected Object");
 	delectObject->callback(delObjectCb);
+
+	Button* addLight = new Button(w + Button_SPACE, 
+									MENU_SPACE + BUTTON_HEIGHT * 11 + Button_SPACE * 12, 
+									Button_WIDTH, 
+									BUTTON_HEIGHT, 
+									"Add Light");
+	addLight->callback(addConeCb);
+
+	_lightSelectButton = new Fl_Menu_Button(w + Button_SPACE,
+										MENU_SPACE + BUTTON_HEIGHT* 12  + Button_SPACE * 13, 
+										Button_WIDTH,
+										BUTTON_HEIGHT,
+										"Selected Light");
+	
+	for(int j=0;j<_scene->getNumLights();j++){
+		Light* light = _scene->getLight(j); 
+		_lightSelectButton->add(light->toString().c_str(), 0, lightSelectButtonCb, light, 0);
+	}
+	Button* openLightProperty = new Button(w + Button_SPACE, 
+										MENU_SPACE + BUTTON_HEIGHT* 13  + Button_SPACE * 14, 
+										Button_WIDTH, 
+										BUTTON_HEIGHT, 
+										"Open Light Property");
+	openLightProperty->callback(openLightPropertyCb);
+
+	Button* delectLight = new Button(w + Button_SPACE, 
+										MENU_SPACE + BUTTON_HEIGHT* 14  + Button_SPACE * 15, 
+										Button_WIDTH, 
+										BUTTON_HEIGHT, 
+										"Delete Selected Light");
+	delectLight->callback(delObjectCb);
 
 	end();
 }
@@ -369,6 +408,20 @@ void MainWindow::selectButtonCb(Fl_Widget* widget, void* data){
 	//display the highlighted line
 	_zbuffer->setHightlighted(_highlighted); 
 }
+
+/**
+ * @brief callback function of the select button
+ * @details select objects from the scene
+ * 
+ * @param widget [description]
+ * @param gemo the selected object
+ */
+void MainWindow::lightSelectButtonCb(Fl_Widget* widget, void* data){
+	Light* light = (Light*)data;
+	debugInfo("highlighted " + light->toString());
+	_lightHighlighted = light;
+}
+
 /**
  * @brief callback funtion of delete button
  * @details delete the selected object from the scene
@@ -418,7 +471,21 @@ void MainWindow::openPropertyCb(Fl_Widget* widget)
 	}
 
 }
+/**
+ * @brief callback funtion of open button
+ * @details open the selected object from the scene
+ * 
+ * @param widget require first parameter
+ */
+void MainWindow::openLightPropertyCb(Fl_Widget* widget)
+{
+	// this is an example of how to activate and deactive an operator
+	if(_lightHighlighted){
+		debugInfo(_lightHighlighted -> toString());
+		_lightHighlighted = NULL;
+	}
 
+}
 void MainWindow::prepScene(){
 	if(_scene){
 		// this is connecting/disconnecting operators to geometries

@@ -64,7 +64,7 @@ public:
 
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this,ret); }
 	string toString(){
-		return "Light";
+		return "Light" + _pos.toString();
 	}
 };
 
