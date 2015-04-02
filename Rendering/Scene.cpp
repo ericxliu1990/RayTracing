@@ -263,13 +263,14 @@ void ReadSceneObjectVisitor::visit(Sphere* sphere, void* ret){
 
 // TODO: need to properly fill this out
 void ReadSceneObjectVisitor::visit(Ellipsoid* op, void* ret){
-	readPt3(_stream); //center
-	readVec3(_stream); //v1
-	readVec3(_stream); //v2
-	readVec3(_stream); //v3
-	readFloat(_stream); //l1
-	readFloat(_stream); //l2
-	readFloat(_stream); //l3
+	op->setCenter(readPt3(_stream)); //corner
+	op->setAxis1(readVec3(_stream)); //v1
+	op->setAxis2(readVec3(_stream)); //v2
+	op->setAxis3(readVec3(_stream)); //v3
+	op->setLen1(readFloat(_stream)); //l1
+	op->setLen2(readFloat(_stream)); //l2
+	op->setLen3(readFloat(_stream)); //l3
+	op->updateTransform(); 
 }
 
 // TODO: need to properly fill this out (if you want)
@@ -286,24 +287,26 @@ void ReadSceneObjectVisitor::visit(Box* op, void* ret){
 
 // TODO: need to properly fill this out
 void ReadSceneObjectVisitor::visit(Cylinder* op, void* ret){
-	readPt3(_stream); //center
-	readPt3(_stream); //v1
-	readPt3(_stream); //v2
-	readPt3(_stream); //v3
-	readFloat(_stream); //height
-	readFloat(_stream); //l1
-	readFloat(_stream); //l2
+	op->setCenter(readPt3(_stream)); //corner
+	op->setAxis1(readVec3(_stream)); //v1
+	op->setAxis2(readVec3(_stream)); //v2
+	op->setAxis3(readVec3(_stream)); //v3
+	op->setLen1(readFloat(_stream)); //l1
+	op->setLen2(readFloat(_stream)); //l2
+	op->setLen3(readFloat(_stream)); //l3
+	op->updateTransform(); 
 }
 
 // TODO: need to properly fill this out
 void ReadSceneObjectVisitor::visit(Cone* op, void* ret){
-	readPt3(_stream); //center
-	readPt3(_stream); //v1
-	readPt3(_stream); //v2
-	readPt3(_stream); //v3
-	readFloat(_stream); //height
-	readFloat(_stream); //l1
-	readFloat(_stream); //l2
+	op->setCenter(readPt3(_stream)); //corner
+	op->setAxis1(readVec3(_stream)); //v1
+	op->setAxis2(readVec3(_stream)); //v2
+	op->setAxis3(readVec3(_stream)); //v3
+	op->setLen1(readFloat(_stream)); //l1
+	op->setLen2(readFloat(_stream)); //l2
+	op->setLen3(readFloat(_stream)); //l3
+	op->updateTransform(); 
 }
 
 void WriteSceneObjectVisitor::visit(Material* mat, void* ret){
@@ -357,7 +360,56 @@ void WriteSceneObjectVisitor::visit(Box* op, void* ret){
 }
 
 // TODO: fill in all the functions below
-void WriteSceneObjectVisitor::visit(Ellipsoid* op, void* ret){}
-void WriteSceneObjectVisitor::visit(Cylinder* op, void* ret){}
-void WriteSceneObjectVisitor::visit(Cone* op, void* ret){}
+void WriteSceneObjectVisitor::visit(Ellipsoid* op, void* ret){
+	writeString(_stream,"ellipsoid"); (*_stream)<<endl;
+	writePt3(_stream,op->getCenter()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis1()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis2()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis3()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen1()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen2()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen3()); 
+	(*_stream)<<endl;
+}
+void WriteSceneObjectVisitor::visit(Cylinder* op, void* ret){
+	writeString(_stream,"cylinder"); (*_stream)<<endl;
+	writePt3(_stream,op->getCenter()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis1()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis2()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis3()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen1()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen2()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen3()); 
+	(*_stream)<<endl;
+
+}
+void WriteSceneObjectVisitor::visit(Cone* op, void* ret){
+	writeString(_stream,"cone"); (*_stream)<<endl;
+	writePt3(_stream,op->getCenter()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis1()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis2()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis3()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen1()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen2()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen3()); 
+	(*_stream)<<endl;
+}
 
