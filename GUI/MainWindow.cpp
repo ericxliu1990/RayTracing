@@ -185,14 +185,14 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Sphere");
-	addSphere->callback(addObjectCb);
+	addSphere->callback(addSphereCb);
 
 	Button* addBox = new Button(w + Button_SPACE, 
 									MENU_SPACE + BUTTON_HEIGHT + Button_SPACE * 2, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Box");
-	// addBox->callback(addObjectCb);
+	addBox->callback(addBoxCb);
 
 
 	Button* addEllipsoid = new Button(w + Button_SPACE, 
@@ -200,29 +200,48 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Ellipsoid");
-	// addEllipsoid->callback(addObjectCb);
+	addEllipsoid->callback(addEllipsoidCb);
 
 	Button* addCylinder = new Button(w + Button_SPACE, 
 									MENU_SPACE + BUTTON_HEIGHT * 3 + Button_SPACE * 4, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Cylinder");
-	// addCylinder->callback(addObjectCb);
+	addCylinder->callback(addCylinderCb);
 
 	Button* addCone = new Button(w + Button_SPACE, 
 									MENU_SPACE + BUTTON_HEIGHT * 4 + Button_SPACE * 5, 
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Cone");
-	// addCone->callback(addObjectCb);
+	addCone->callback(addConeCb);
+	
+	_selectButton = new Fl_Menu_Button(w + Button_SPACE,
+										MENU_SPACE + BUTTON_HEIGHT* 5  + Button_SPACE * 6, 
+										Button_WIDTH,
+										BUTTON_HEIGHT,
+										"Selected");
+	
+	for(int j=0;j<_scene->getNumObjects();j++){
+		Geometry* geom = _scene->getObject(j); 
+		_selectButton->add(geom->toString().c_str(), 0, selectButtonCb, geom, 0);
+	}
+
+
+	Button* openPropertyWindow = new Button(w + Button_SPACE, 
+										MENU_SPACE + BUTTON_HEIGHT* 6  + Button_SPACE * 7, 
+										Button_WIDTH, 
+										BUTTON_HEIGHT, 
+										"Open Property Window");
+	openPropertyWindow->callback(openPropertyCb);
 
 	Button* delectObject = new Button(w + Button_SPACE, 
-										MENU_SPACE + BUTTON_HEIGHT* 5  + Button_SPACE * 6, 
+										MENU_SPACE + BUTTON_HEIGHT* 7  + Button_SPACE * 8, 
 										Button_WIDTH, 
 										BUTTON_HEIGHT, 
 										"Delete Selected Object");
 	delectObject->callback(delObjectCb);
-	
+
 	end();
 }
 
@@ -254,26 +273,97 @@ void MainWindow::saveFileMenuCb(Fl_Widget* widget, void* win){
  * 
  * @param widget required first parameter
  */
-void MainWindow::addObjectCb(Fl_Widget* widget)
+void MainWindow::addSphereCb(Fl_Widget* widget)
 {
-	Sphere* geom = new Sphere(); 
 	// default sphere
-	geom->setCenter(Pt3(0, 1, 0)); 
-	geom->setRadius(0.5f); 
+	Sphere* geom = new Sphere(Pt3(0, 1, 0), 0.5f); 
 	getScene()->addObject(geom);
-
-	Material* mat = new Material(); 
-	// default material
-	mat->setAmbient(Pt3(0.5, 0.4, 0.95)); 
-	mat->setDiffuse(Pt3(0.5, 0.4, 0.95)); 
-	mat->setSpecular(Pt3(0.5, 0.5, 0.5)); 
-	mat->setSpecExponent(5.0f); 
-	mat->setReflective(0.5f); 
-	mat->setTransparency(0.1f); 
-	mat->setRefractIndex(1.6f); 
-	getScene()->attachMaterial(geom,mat); 
-	cout << "Add a Sphere" << endl;
+	getScene()->attachMaterial(geom); 
+	debugInfo("Add" + geom->toString());
 	prepScene();
+}
+/**
+ * @brief callback funttion of add object button
+ * @details add a default Box to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addBoxCb(Fl_Widget* widget)
+{
+	Box* geom = new Box(Pt3(0.0f, 0.0f, 0.5f), 
+						Vec3(1.0f, 0.0f, 0.0f),
+						Vec3(0.0f, 1.0f, 0.0f),
+						Vec3(0.0f, 0.0f, 1.0f),
+						0.6f, 0.6f, 0.6f);
+	geom->updateTransform();
+	getScene()->addObject(geom);
+	getScene()->attachMaterial(geom); 
+	debugInfo("Add" + geom->toString());
+	prepScene();
+}
+/**
+ * @brief callback funttion of add object button
+ * @details add a default Ellipsoid to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addEllipsoidCb(Fl_Widget* widget)
+{
+	Ellipsoid* geom = new Ellipsoid(Pt3(0.0f, 0.0f, 0.0f), 
+						Vec3(1.0f, 0.0f, 0.0f),
+						Vec3(0.0f, 1.0f, 0.0f),
+						Vec3(0.0f, 0.0f, 1.0f),
+						0.5f, 0.5f, 0.5f);
+	getScene()->addObject(geom);
+	getScene()->attachMaterial(geom); 
+	debugInfo("Add" + geom->toString());
+	prepScene();
+}
+/**
+ * @brief callback funttion of add object button
+ * @details add a default Cylinder to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addCylinderCb(Fl_Widget* widget)
+{
+	Cylinder* geom = new Cylinder(Pt3(0.0f, 0.0f, 0.0f), 
+						Vec3(1.0f, 1.0f, 1.0f),
+						Vec3(0.0f, 1.0f, 0.0f),
+						Vec3(0.0f, 0.0f, 1.0f),
+						0.5f, 0.5f, 1.0f);
+	getScene()->addObject(geom);
+	getScene()->attachMaterial(geom); 
+	debugInfo("Add" + geom->toString());
+	prepScene();
+}
+/**
+ * @brief callback funttion of add object button
+ * @details add a default Cone to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addConeCb(Fl_Widget* widget)
+{
+	Cone* geom = new Cone();
+	getScene()->addObject(geom);
+	getScene()->attachMaterial(geom); 
+	debugInfo("Add" + geom->toString());
+	prepScene();
+}
+/**
+ * @brief callback function of the select button
+ * @details select objects from the scene
+ * 
+ * @param widget [description]
+ * @param gemo the selected object
+ */
+void MainWindow::selectButtonCb(Fl_Widget* widget, void* data){
+	Geometry* geom = (Geometry*)data;
+	debugInfo(geom->toString());
+	_highlighted = geom;
+	//display the highlighted line
+	_zbuffer->setHightlighted(_highlighted); 
 }
 /**
  * @brief callback funtion of delete button
@@ -283,18 +373,46 @@ void MainWindow::addObjectCb(Fl_Widget* widget)
  */
 void MainWindow::delObjectCb(Fl_Widget* widget)
 {
-	if(_zbuffer->getSelected())
+	if(_zbuffer->getSelected() || _highlighted)
 	{
+		Geometry* deleteobj;
+		deleteobj = _highlighted ? _highlighted : _zbuffer->getSelected();
 		// get the selected object and delect it
-		getScene()->deleteObject(_zbuffer->getSelected());
+		debugInfo("Delete" + deleteobj->toString());
+		getScene()->deleteObject(deleteobj);
 		//clear operator and close the property window
-		_zbuffer->getOperator()->setState(OP_NONE);
-		_zbuffer->setSelected(NULL); 
-		_zbuffer->setOperator(NULL,0); 
+		if (_zbuffer->getOperator())
+		{
+			_zbuffer->getOperator()->setState(OP_NONE);
+			_zbuffer->setSelected(NULL); 
+			_zbuffer->setOperator(NULL,0); 
+		}
 		PropertyWindow::closePropertyWindow(); 
-		cout << "Delete Object" << endl;
+		_highlighted = NULL;
+		prepScene();
+	}else{
+		cout << "You Need select one object" << endl;
 	}
-	cout << "You Need select one object" << endl;
+}
+/**
+ * @brief callback funtion of open button
+ * @details open the selected object from the scene
+ * 
+ * @param widget require first parameter
+ */
+void MainWindow::openPropertyCb(Fl_Widget* widget)
+{
+	// this is an example of how to activate and deactive an operator
+	if(_highlighted){
+		_zbuffer->setSelected(_highlighted);
+		_zbuffer->setOperator(_geom2op[_highlighted],OP_MODE_TRANSLATE); 
+		_zbuffer->getOperator()->setState(OP_TRANSLATE); 
+		_inputMode = INPUT_EDITING; 
+		PropertyWindow::openPropertyWindow(_highlighted,_geom2op[_highlighted],_scene->getMaterial(_highlighted)); 
+		_highlighted = NULL;
+		_zbuffer->setHightlighted(NULL);
+	}
+
 }
 
 void MainWindow::prepScene(){
@@ -305,17 +423,27 @@ void MainWindow::prepScene(){
 				delete i->second; 
 			_geom2op.clear(); 
 		}
+		if (_singleton &&_singleton->_selectButton)
+		{
+			_singleton->_selectButton->clear();
+		}
 
 		for(int j=0;j<_scene->getNumObjects();j++){
 			Geometry* geom = _scene->getObject(j); 
 			Operator* op = new Operator(dynamic_cast<Operand*>(geom)); 
 			_geom2op[geom] = op; 
+			if (_singleton &&_singleton->_selectButton)
+			{
+				_singleton->_selectButton->add(geom->toString().c_str(), 0, selectButtonCb, geom, 0);
+			}
 		}
 		_zbuffer->setScene(_scene); 
 		_zbuffer->initScene(); 
 
 		_rtviewer->getRaytracer()->setScene(_scene); 
-		updateModelView(); 
+		updateModelView();
+		debugInfo("Called prepScene!");
+
 	}
 }
 
@@ -575,13 +703,14 @@ void MainWindow::mouseMove(int x, int y){
 	else if(_inputMode==INPUT_EDITING){
 		Operator* op = _zbuffer->getOperator(); 
 		if(op){
+			// debugInfo(op->toString());
 			IsectAxisData data; 
 			Ray r = getMouseRay(x,y); 
 			_intersector->setRay(r); 
 			op->accept(_intersector,&data); 
 
 			int editMode = _holdShift? OP_MODE_ROTATE : OP_MODE_TRANSLATE; 
-
+			// debugInfo("IsectAxisData.hit", data.hit);
 			if(data.hit){
 				if(_zbuffer->getOperatorMode()!=(editMode|data.axis))
 					_zbuffer->setOperator(op,editMode|data.axis); 
@@ -605,6 +734,7 @@ void MainWindow::mouseMove(int x, int y){
 		else
 			_inputMode=INPUT_VIEWING; 
 	}
+	// do raytracing to find the selected object
 	else if(_inputMode==INPUT_SELECTING){
 		IsectData data;
 

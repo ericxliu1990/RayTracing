@@ -30,7 +30,12 @@ public:
 	inline void setReflective(double r)  { _reflective = r; }
 	inline void setTransparency(double t) { _transp = t; }
 	inline void setRefractIndex(double r) { _refractInd = r; }
-	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this,ret); }
+	virtual void accept(SceneObjectVisitor* visitor, void* ret) { 
+		visitor->visit(this,ret); 
+	}
+	string toString(){
+		return "Material";
+	}
 }; 
 
 class Light : public  SceneObject{ 
@@ -58,6 +63,9 @@ public:
 	inline void setId(unsigned int id) { _id = id; }
 
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this,ret); }
+	string toString(){
+		return "Light";
+	}
 };
 
 
@@ -85,6 +93,10 @@ public:
 
 	virtual void accept(GeometryVisitor* visitor, void* ret){ visitor->visit(this, ret); }
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this, ret); }
+	string toString(){
+		return "Sphere" + getCenter().toString();
+	}
+
 };
 
 class Box : public Geometry, public Operand{
@@ -142,46 +154,122 @@ public:
 
 	virtual void accept(GeometryVisitor* visitor, void* ret){ visitor->visit(this, ret); }
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this, ret); }
+	string toString(){
+		return "Box" + getCenter().toString();
+	}
+
 }; 
 
 // TODO: finish the definition of the following classes
 class Ellipsoid : public Geometry, public Operand{
+private:
+	Pt3 _center;
+	Vec3 _axis1;
+	Vec3 _axis2;
+	Vec3 _axis3;
+	double _len1;
+	double _len2;
+	double _len3;
+
 public: 
 	Ellipsoid() {}; 
-
-	Pt3 getCenter() { return Pt3(0,0,0); }
+	Ellipsoid(const Pt3& center, const Vec3& axis1, const Vec3& axis2,
+				const Vec3& axis3, double len1, double len2, double len3) {
+		_center = center;
+		_axis1 = axis1;
+		_axis2 = axis2;
+		_axis3 = axis3;
+		_len1 = len1;
+		_len2 = len2;
+		_len3 = len3;
+		updateTransform(); 
+	};
+	Pt3 getCenter() { return _center; }
+	double getLen1() { return _len1; }
+	double getLen2() { return _len2; }
+	double getLen3() { return _len3; }
 	void translate(const Vec3& trans); 
 	void rotate(double d, int axis); 
 	void updateTransform(); 
 
 	virtual void accept(GeometryVisitor* visitor, void* ret){ visitor->visit(this, ret); }
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this, ret); }
+	string toString(){
+		return "Ellipsoid" + getCenter().toString();
+	}
+
 }; 
 
 class Cylinder : public Geometry, public Operand{
+private:
+	Pt3 _baseCenter;
+	Vec3 _baseAxis1;
+	Vec3 _baseAxis2;
+	Vec3 _centerAxis;
+	double _lenAxis1;
+	double _lenAxis2;
+	double _height;
+
 public: 
 	Cylinder() {}; 
-
-	Pt3 getCenter() { return Pt3(); }
+	Cylinder(const Pt3& baseCenter, const Vec3& baseAxis1, const Vec3& baseAxis2,
+			const Vec3& centerAxis, double lenAxis1, double lenAxis2, double height){
+		_baseCenter = baseCenter;
+		_baseAxis1 = baseAxis1;
+		_baseAxis2 = baseAxis2;
+		_lenAxis1 = lenAxis1;
+		_lenAxis2 = lenAxis2;
+		_height = height;
+	};
+	Pt3 getCenter() { return _baseCenter; }
+	double getLenAxis1() { return _lenAxis1; }
+	double getLenAxis2() { return _lenAxis2; }
+	double getHeight() { return _height; }
 	void translate(const Vec3& trans); 
 	void rotate(double d, int axis); 
 	void updateTransform(); 
 
 	virtual void accept(GeometryVisitor* visitor, void* ret){ visitor->visit(this, ret); }
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this, ret); }
+	string toString(){
+		return "Cylinder" + getCenter().toString();
+	}
+
 }; 
 
 class Cone : public Geometry, public Operand{
+private:
+	Pt3 _baseCenter;
+	Vec3 _baseAxis1;
+	Vec3 _baseAxis2;
+	Vec3 _centerAxis;
+	double _lenAxis1;
+	double _lenAxis2;
+	double _height;
+
 public: 
 	Cone() {}; 
-
-	Pt3 getCenter() { return Pt3(); }
+	Cone(const Pt3& baseCenter, const Vec3& baseAxis1, const Vec3& baseAxis2,
+		const Vec3& centerAxis, double lenAxis1, double lenAxis2, double height){
+		_baseCenter = baseCenter;
+		_baseAxis1 = baseAxis1;
+		_baseAxis2 = baseAxis2;
+		_centerAxis = centerAxis;
+		_lenAxis1 = lenAxis1;
+		_lenAxis2 = lenAxis2;
+		_height = height;
+	};
+	Pt3 getCenter() { return _baseCenter; }
 	void translate(const Vec3& trans); 
 	void rotate(double d, int axis); 
 	void updateTransform(); 
 
 	virtual void accept(GeometryVisitor* visitor, void* ret){ visitor->visit(this, ret); }
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this, ret); }
+	string toString(){
+		return "Cone" + getCenter().toString();
+	}
+
 }; 
 
 

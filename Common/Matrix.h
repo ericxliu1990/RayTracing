@@ -7,6 +7,7 @@
 #include <string>
 #include <cassert>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -75,7 +76,22 @@ public:
 			memcpy(data[r], M.data[r], copySize);
 		}
 	}
-
+	string toString(){
+		stringstream ret;
+		int i = 0;
+		ret << "[";
+		for (i = 0; i < N; ++i)
+		{
+			ret << "(";
+			for (int j = 0; j < N - 1; ++j)
+			{
+				ret << data[i][j] << ", ";
+			}
+			ret << data[i][N - 1] << "), ";
+		}
+		ret << "]";
+		return ret.str();
+	}
 	virtual ~Matrix(){
 		if(data){
 			for(int r=0;r<rows;r++){
@@ -331,8 +347,17 @@ public:
 		memcpy (data, vec.data, sizeof (Type) * size);
 
 	}
-
-
+	string toString(){
+		stringstream ret;
+		int i = 0;
+		ret << "(";
+		for (i = 0; i < n - 1; ++i)
+		{
+			ret << data[i] << ", ";
+		}
+		ret << data[i] << ")";
+		return ret.str();
+	}
 	virtual void operator += (const Vector<Type, n>& vec){
 		for(int i = 0; i <size; i++)
 			data[i] += vec.data[i];
@@ -494,7 +519,23 @@ public:
 
 		return res;
 	}
-
+	friend Matrix<Type, n> compose(const Vector<Type, n> &a, const Vector<Type, n> &b, 
+									const Vector<Type, n> &c, const Vector<Type, n> &d){
+		assert(a.size == 4 && b.size == 4 && c.size == 4 && d.size == 4);
+		Matrix<Type, n> m;
+		for (int j = 0; j < n - 1; ++j)
+		{
+			m[0][j] = a[j];
+			m[1][j] = b[j];
+			m[2][j] = c[j];
+			m[3][j] = d[j];
+		}
+		m[0][n - 1] = 0;
+		m[1][n - 1] = 0;
+		m[2][n - 1] = 0;
+		m[3][n - 1] = 1;
+		return m;
+	}
 	void normalize()	{
 		Type m = mag(*this);
 		if(m != 0){

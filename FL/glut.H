@@ -465,6 +465,8 @@ FL_EXPORT void glutWireSphere(GLdouble radius, GLint slices, GLint stacks);
 FL_EXPORT void glutSolidSphere(GLdouble radius, GLint slices, GLint stacks);
 FL_EXPORT void glutWireCone(GLdouble base, GLdouble height, GLint slices, GLint stacks);
 FL_EXPORT void glutSolidCone(GLdouble base, GLdouble height, GLint slices, GLint stacks);
+FL_EXPORT void glutSolidCylinder(GLdouble base, GLdouble height, GLint slices, GLint stacks);
+FL_EXPORT void glutSolidCylinder(GLdouble base, GLdouble height, GLint slices, GLint stacks);
 FL_EXPORT void glutWireCube(GLdouble size);
 FL_EXPORT void glutSolidCube(GLdouble size);
 FL_EXPORT void glutWireTorus(GLdouble innerRadius, GLdouble outerRadius, GLint sides, GLint rings);

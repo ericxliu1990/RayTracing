@@ -79,7 +79,9 @@ public:
 
 	virtual void accept(GeometryVisitor* visitor, void* ret)=0; 
 	virtual void accept(SceneObjectVisitor* visitor, void* ret){}
-
+	virtual string toString(){
+		return "Geometry";
+	};
 }; 
 
 class GeometryUtils{

@@ -13,7 +13,9 @@
 #ifndef FINF32
 #define FINF32 1000000000.f
 #endif
-
+#ifndef DEBUG_MODE
+#define DEBUG_MODE true
+#endif
 using namespace std; 
 
 const Fl_Color WIN_COLOR = fl_rgb_color(244,247,251); 
@@ -27,5 +29,8 @@ namespace Str{
 	bool isNumber(char c); 
 	vector<string> split(const string& s, char c); 
 }
+
+void debugInfo(const string& str);
+void debugInfo(const string& str, bool var);
 
 #endif

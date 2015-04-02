@@ -67,3 +67,14 @@ vector<string> Str::split(const string& s, char c){
 
 	return ret2; 
 }
+
+void debugInfo(const string& str){
+	if(DEBUG_MODE){
+		std::cout << str << endl;
+	}
+}
+void debugInfo(const string& str, bool var){
+	if(DEBUG_MODE){
+		std::cout << str << " " << var << endl;
+	}
+}

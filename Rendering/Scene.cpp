@@ -6,6 +6,8 @@
 #include <sstream> 
 #include <iostream> 
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 #include <FL/gl.h>
 
@@ -76,6 +78,39 @@ void Scene::deleteObject(Geometry* obj){
 		_objs.erase(_objs.begin() + pos);
 	}
 }
+
+/**
+ * @brief add material to the object
+ * @details attach material to the object
+ * 
+ * @param obj the object
+ * @param mat the material
+ */
+void Scene::attachMaterial(Geometry* obj, Material* mat){
+	_mats[obj] = mat; 
+}
+
+/**
+ * @brief attach the default material to the object
+ * @details attach the default material to the object
+ * 
+ * @param obj the object need to attach material
+ */
+void Scene::attachMaterial(Geometry* obj) { 
+	
+	Material* mat = new Material(); 
+	std::srand(std::time(0));
+	Pt3 aPoint(std::rand() / (float)RAND_MAX, std::rand() / (float)RAND_MAX, std::rand() / (float)RAND_MAX);
+	mat->setAmbient(aPoint); 
+	mat->setDiffuse(aPoint); 
+	mat->setSpecular(Pt3(0.5, 0.5, 0.5)); 
+	mat->setSpecExponent(5.0f); 
+	mat->setReflective(0.5f); 
+	mat->setTransparency(0.1f); 
+	mat->setRefractIndex(1.6f); 
+	_mats[obj] = mat; 
+}
+
 /**
  * @brief delete material
  * @details delete the material attached to the object
@@ -239,14 +274,14 @@ void ReadSceneObjectVisitor::visit(Ellipsoid* op, void* ret){
 
 // TODO: need to properly fill this out (if you want)
 void ReadSceneObjectVisitor::visit(Box* op, void* ret){
-	op->setCorner(readPt3(_stream)); //corner
-	op->setLengthVec(readVec3(_stream)); //v1
-	op->setWidthVec(readVec3(_stream)); //v2
-	op->setHeightVec(readVec3(_stream)); //v3
-	op->setLength(readFloat(_stream)); //l1
-	op->setWidth(readFloat(_stream)); //l2
-	op->setHeight(readFloat(_stream)); //l3
-	op->updateTransform(); 
+	//op->setCorner(readPt3(_stream)); //corner
+	//op->setLengthVec(readVec3(_stream)); //v1
+	//op->setWidthVec(readVec3(_stream)); //v2
+	//op->setHeightVec(readVec3(_stream)); //v3
+	//op->setLength(readFloat(_stream)); //l1
+	//op->setWidth(readFloat(_stream)); //l2
+	//op->setHeight(readFloat(_stream)); //l3
+	//op->updateTransform(); 
 }
 
 // TODO: need to properly fill this out

@@ -1,6 +1,7 @@
 #include "Rendering/ZBufferRenderer.h" 
 #include "Rendering/Shading.h" 
 #include "GUI/MainWindow.h" 
+#include "Common/Common.h" 
 
 ZBufferRenderer::ZBufferRenderer(){
 	_visitor = new ZBufferVisitor(); 
@@ -80,7 +81,8 @@ void ZBufferRenderer::draw() {
 		glBlendFunc(GL_SRC_ALPHA,GL_ONE_MINUS_SRC_ALPHA);
 		Material* mat = _scene->getMaterial(_selected); 
 		Color diffuse = mat->getDiffuse(); 
-		glColor4f(diffuse[0],diffuse[1],diffuse[2],.8f); 
+		//when selected change the transparency rate
+		glColor4f(diffuse[0],diffuse[1],diffuse[2],.6f); 
 		_selected->accept(_visitor,NULL); 
 		glDisable(GL_BLEND); 
 	}
@@ -113,10 +115,12 @@ void ZBufferRenderer::drawGrid(){
 
 void ZBufferRenderer::setSelected(Geometry* geom){
 	_selected = geom; 
+	debugInfo("set selected" + (geom ? geom->toString() : "NULL"));
 }
 
 void ZBufferRenderer::setHightlighted(Geometry* geom){
 	_highlighted = geom; 
+	// debugInfo("set heighlighted" + (geom ? geom->toString() : "NULL"));
 }
 
 void ZBufferRenderer::setOperator(Operator* op, int mode){
@@ -140,7 +144,7 @@ void ZBufferVisitor::visit(Sphere* sphere, void* ret){
 	glPushMatrix(); 
 	Pt3 c = sphere->getCenter(); 
 	glTranslatef(c[0],c[1],c[2]); 
-	float r = sphere->getRadius(); 
+	double r = sphere->getRadius(); 
 	gluSphere(_quadric,r,50,50); 
 	glPopMatrix(); 
 }
@@ -195,17 +199,29 @@ void ZBufferVisitor::visit(Box* op, void* ret){
 
 // TODO: fill in this function
 void ZBufferVisitor::visit(Ellipsoid* op, void* ret){
-	cout<<"fill in ellipsoid function"<<endl;
+	glMatrixMode(GL_MODELVIEW); 
+	glPushMatrix(); 
+	glMultMatrixf(op->getGLForwardMat()); 
+	gluSphere(_quadric, 1.0, 50, 50); 
+	glPopMatrix();
 }
 
 // TODO: fill in this function
 void ZBufferVisitor::visit(Cylinder* op, void* ret){
-	cout<<"fill in cylinder function"<<endl;
+	glMatrixMode(GL_MODELVIEW); 
+	glPushMatrix();
+	glMultMatrixf(op->getGLForwardMat()); 
+	gluCylinder(_quadric, 1.0f, 1.0f, 1.0f, 50, 50); 
+	glPopMatrix();
 }
 
 // TODO: fill in this function
 void ZBufferVisitor::visit(Cone* op, void* ret){
-	cout<<"fill in cone function"<<endl;
+	glMatrixMode(GL_MODELVIEW); 
+	glPushMatrix();
+	glMultMatrixf(op->getGLForwardMat()); 
+	gluCylinder(_quadric, 1.0f, 0.0f, 1.0f, 50, 50); 
+	glPopMatrix();
 }
 
 void drawAxis(GLUquadric* quad){

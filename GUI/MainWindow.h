@@ -71,7 +71,7 @@ protected:
 
 	static RaytraceViewer* _rtviewer; 
 
-	Fl_Menu_Bar* _menuBar; 
+	Fl_Menu_Button* _selectButton;
 
 public: 
 	MainWindow(int x, int y, int w, int h, const char* l=0); 
@@ -113,8 +113,14 @@ protected:
 		Fl::repeat_timeout(REFRESH_RATE,MainWindow::updateCb,userdata);
 	}
 
-	static void addObjectCb(Fl_Widget* widget);
+	static void addSphereCb(Fl_Widget* widget);
+	static void addBoxCb(Fl_Widget* widget);
+	static void addEllipsoidCb(Fl_Widget* widget);
+	static void addCylinderCb(Fl_Widget* widget);
+	static void addConeCb(Fl_Widget* widget);
+	static void selectButtonCb(Fl_Widget* widget, void* geom);
 	static void delObjectCb(Fl_Widget* widget);
+	static void openPropertyCb(Fl_Widget* widget);
 	static void prepScene(); 
 	static void openFile(const std::string& fname); 
 	static void saveFile(const std::string& fname); 

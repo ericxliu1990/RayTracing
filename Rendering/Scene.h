@@ -28,6 +28,9 @@ public:
 class SceneObject{
 public: 
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) = 0; 
+	string toString(){
+		return "SceneObject";
+	};
 };
 
 class Scene{
@@ -47,7 +50,8 @@ public:
 	void addLight(Light* light) { _lights.push_back(light); }
 	void addObject(Geometry* obj){	_objs.push_back(obj); }
 	void deleteObject(Geometry* obj);
-	void attachMaterial(Geometry* obj, Material* mat) { _mats[obj] = mat; }
+	void attachMaterial(Geometry* obj, Material* mat);
+	void attachMaterial(Geometry* obj);
 	void deleteMaterial(Geometry* obj);
 	int getNumObjects() { return _objs.size(); }
 	int getNumLights() { return _lights.size(); }

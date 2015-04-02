@@ -8,6 +8,9 @@ public:
 	virtual Pt3 getCenter()=0; 
 	virtual void translate(const Vec3& trans)=0; 
 	virtual void rotate(double d, int axis)=0; 
+	virtual string toString(){
+		return "Operand" + getCenter().toString();
+	}
 }; 
 
 #define OP_NONE 0
@@ -43,7 +46,10 @@ public:
 	}
 
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { } // not a scene object, do nothing
-
+	
+	virtual string toString(){
+		return "Operator" + _primary->toString();
+	}
 	Operand* getPrimaryOp() { return _primary; }
 	Operand* getSecondaryOp() { return _secondary; }
 	void setPrimaryOp(Operand* op) { _primary = op; }
@@ -68,6 +74,7 @@ public:
 	}
 
 	void updateTransform() { } 
+
 };
 
 #endif

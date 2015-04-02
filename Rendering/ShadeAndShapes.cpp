@@ -106,24 +106,7 @@ void Box::updateTransform(){
 	ncenter += _width/2 * _widthv; 
 	ncenter += _height/2 * _heightv; 
 	_center = ncenter; 
-
-	_mat[0][0] = _lengthv[0]*_length;
-	_mat[0][1] = _lengthv[1]*_length;
-	_mat[0][2] = _lengthv[2]*_length;
-	_mat[0][3] = 0; 
-	_mat[1][0] = _widthv[0]*_width;
-	_mat[1][1] = _widthv[1]*_width;
-	_mat[1][2] = _widthv[2]*_width;
-	_mat[1][3] = 0; 
-	_mat[2][0] = _heightv[0]*_height;
-	_mat[2][1] = _heightv[1]*_height;
-	_mat[2][2] = _heightv[2]*_height;
-	_mat[2][3] = 0; 
-	_mat[3][0] = _corner[0];
-	_mat[3][1] = _corner[1];
-	_mat[3][2] = _corner[2];
-	_mat[3][3] = 1;
-
+	_mat = compose(_lengthv * _length, _widthv * _width, _heightv * _height, _center);
 	_imat = !_mat; 
 
 	Geometry::updateTransform(); // must call this at the end
@@ -201,15 +184,30 @@ void Intersector::visit(Box* op, void* ret){
 	}
 }
 
-// TODO: need to fill in the following functions
-void Ellipsoid::updateTransform() {}
-void Intersector::visit(Ellipsoid* op, void* ret){}
+/**
+ * @brief update the transform matrix of ellipsoid
+ * @details [long description]
+ */
+void Ellipsoid::updateTransform() {
+	_mat = compose(_axis1 * _len1, _axis2 * _len2, _axis3 * _len3, _center);
+	_imat = !_mat;
+	Geometry::updateTransform();
+}
+void Intersector::visit(Ellipsoid* op, void* ret){
 
-void Cylinder::updateTransform() {}
+}
+
+void Cylinder::updateTransform() {
+
+}
 void Intersector::visit(Cylinder* op, void* ret){}
 
-void Cone::updateTransform() {}
-void Intersector::visit(Cone* op, void* ret){}
+void Cone::updateTransform() {
+
+}
+void Intersector::visit(Cone* op, void* ret){
+
+}
 
 // The operator is the widget that allows you to translate and rotate a geometric object
 // It is colored as red/green/blue.  When one of the axis is highlighted, it is yellow.

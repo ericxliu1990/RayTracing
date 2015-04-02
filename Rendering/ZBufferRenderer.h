@@ -29,7 +29,7 @@ public:
 
 	virtual void draw(); 
 	void setSelected(Geometry* geom); 
-	Geometry* getSelected() { return _selected; }
+	Geometry* getSelected() {return _selected;}
 	void setHightlighted(Geometry* geom); 
 	void setOperator(Operator* op, int mode); 
 

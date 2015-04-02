@@ -8,7 +8,7 @@ PropertyWindow* PropertyWindow::_singleton = NULL;
 Operator* PropertyWindow::_op = NULL; 
 
 #define PW_WIDTH 350
-#define PW_HEIGHT 250
+#define PW_HEIGHT 350
 #define MW_HEIGHT 80
 
 MaterialColorButton::MaterialColorButton(int x, int y, const char* name)
@@ -266,8 +266,8 @@ PropertyWindow::PropertyWindow()
 void PropertyWindow::openPropertyWindow(Geometry* geom, Operator* op, Material* mat){
 
 	if(!_singleton)
-		_singleton = new PropertyWindow(); 
-
+		_singleton = new PropertyWindow();
+ 
 	_singleton->show(); 
 	if(geom && op){
 		_op = op; 
