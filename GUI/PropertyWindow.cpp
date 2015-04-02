@@ -360,9 +360,101 @@ void GeometryUpdater::visit(Box* box, void* ret){
 	box->updateTransform(); 
 } 
 // TODO: complete these functions
-void GeometryUpdater::visit(Ellipsoid* op, void* ret){}
-void GeometryUpdater::visit(Cylinder* op, void* ret){}
-void GeometryUpdater::visit(Cone* op, void* ret){} 
+void GeometryUpdater::visit(Ellipsoid* op, void* ret){
+	Pt3 center(0,0,0,1); 
+	Vec3 vs[3]; 
+	Vec3 ds; 
+
+	int dirs[3]={PROP_X,PROP_Y,PROP_Z}; 
+	for(int j=0;j<3;j++){
+		Fl_Float_Input* c = _window->getPos(dirs[j]); 
+		Fl_Float_Input* a0 = _window->getAxis0(dirs[j]); 
+		Fl_Float_Input* a1 = _window->getAxis1(dirs[j]); 
+		Fl_Float_Input* a2 = _window->getAxis2(dirs[j]); 
+		Fl_Float_Input* len = _window->getLength(dirs[j]); 
+
+		center[j] = atof(c->value()); 
+		vs[0][j] = atof(a0->value()); 
+		vs[1][j] = atof(a1->value()); 
+		vs[2][j] = atof(a2->value()); 
+		ds[j] = atof(len->value()); 
+	}
+	vs[0][3]=vs[1][3]=vs[2][3]=0;
+	center[3]=1;
+
+	op->setCenter(center); 
+	op->setAxis1(vs[0]); 
+	op->setAxis2(vs[1]); 
+	op->setAxis3(vs[2]); 
+	op->setLen1(ds[0]); 
+	op->setLen2(ds[1]); 
+	op->setLen3(ds[2]); 
+	op->updateTransform(); 
+}
+void GeometryUpdater::visit(Cylinder* op, void* ret){
+	Pt3 center(0,0,0,1); 
+	Vec3 vs[3]; 
+	Vec3 ds; 
+
+	int dirs[3]={PROP_X,PROP_Y,PROP_Z}; 
+	for(int j=0;j<3;j++){
+		Fl_Float_Input* c = _window->getPos(dirs[j]); 
+		Fl_Float_Input* a0 = _window->getAxis0(dirs[j]); 
+		Fl_Float_Input* a1 = _window->getAxis1(dirs[j]); 
+		Fl_Float_Input* a2 = _window->getAxis2(dirs[j]); 
+		Fl_Float_Input* len = _window->getLength(dirs[j]); 
+
+		center[j] = atof(c->value()); 
+		vs[0][j] = atof(a0->value()); 
+		vs[1][j] = atof(a1->value()); 
+		vs[2][j] = atof(a2->value()); 
+		ds[j] = atof(len->value()); 
+	}
+	vs[0][3]=vs[1][3]=vs[2][3]=0;
+	center[3]=1;
+
+	op->setCenter(center); 
+	op->setAxis1(vs[0]); 
+	op->setAxis2(vs[1]); 
+	op->setAxis3(vs[2]); 
+	op->setLen1(ds[0]); 
+	op->setLen2(ds[1]); 
+	op->setLen3(ds[2]); 
+	op->updateTransform(); 
+
+}
+void GeometryUpdater::visit(Cone* op, void* ret){
+	Pt3 center(0,0,0,1); 
+	Vec3 vs[3]; 
+	Vec3 ds; 
+
+	int dirs[3]={PROP_X,PROP_Y,PROP_Z}; 
+	for(int j=0;j<3;j++){
+		Fl_Float_Input* c = _window->getPos(dirs[j]); 
+		Fl_Float_Input* a0 = _window->getAxis0(dirs[j]); 
+		Fl_Float_Input* a1 = _window->getAxis1(dirs[j]); 
+		Fl_Float_Input* a2 = _window->getAxis2(dirs[j]); 
+		Fl_Float_Input* len = _window->getLength(dirs[j]); 
+
+		center[j] = atof(c->value()); 
+		vs[0][j] = atof(a0->value()); 
+		vs[1][j] = atof(a1->value()); 
+		vs[2][j] = atof(a2->value()); 
+		ds[j] = atof(len->value()); 
+	}
+	vs[0][3]=vs[1][3]=vs[2][3]=0;
+	center[3]=1;
+
+	op->setCenter(center); 
+	op->setAxis1(vs[0]); 
+	op->setAxis2(vs[1]); 
+	op->setAxis3(vs[2]); 
+	op->setLen1(ds[0]); 
+	op->setLen2(ds[1]); 
+	op->setLen3(ds[2]); 
+	op->updateTransform(); 
+
+} 
 
 // Here is the sphere example
 void WidgetUpdater::visit(Sphere* sphere, void* ret){
@@ -429,7 +521,109 @@ void WidgetUpdater::visit(Box* box, void* ret){
 } 
 
 // TODO: complete these functions
-void WidgetUpdater::visit(Ellipsoid* op, void* ret){}
-void WidgetUpdater::visit(Cylinder* op, void* ret){}
-void WidgetUpdater::visit(Cone* op, void* ret){} 
+void WidgetUpdater::visit(Ellipsoid* op, void* ret){
+	Pt3 center = op->getCenter(); 
+	Vec3 vs[3]; 
+	vs[0] = op->getAxis1(); 
+	vs[1] = op->getAxis2(); 
+	vs[2] = op->getAxis3(); 
+
+	double ds[3] = {op->getLen1(), op->getLen2(), op->getLen3()}; 
+
+	int dirs[3]={PROP_X,PROP_Y,PROP_Z}; 
+
+	for(int j=0;j<3;j++){
+		Fl_Float_Input* c = _window->getPos(dirs[j]); 
+		Fl_Float_Input* a0 = _window->getAxis0(dirs[j]); 
+		Fl_Float_Input* a1 = _window->getAxis1(dirs[j]); 
+		Fl_Float_Input* a2 = _window->getAxis2(dirs[j]); 
+		Fl_Float_Input* len = _window->getLength(dirs[j]); 
+
+		c->activate(); 
+		a0->activate(); 
+		a1->activate(); 
+		a2->activate(); 
+		len->activate(); 
+
+		c->value(Str::toString(center[j]).c_str()); 
+		a0->value(Str::toString(vs[0][j]).c_str()); 
+		a1->value(Str::toString(vs[1][j]).c_str()); 
+		a2->value(Str::toString(vs[2][j]).c_str()); 
+		len->value(Str::toString(ds[j]).c_str()); 
+	}
+
+	Fl_Counter* r = _window->getRadius(); 
+	r->deactivate(); 
+
+}
+void WidgetUpdater::visit(Cylinder* op, void* ret){
+	Pt3 center = op->getCenter(); 
+	Vec3 vs[3]; 
+	vs[0] = op->getAxis1(); 
+	vs[1] = op->getAxis2(); 
+	vs[2] = op->getAxis3(); 
+
+	double ds[3] = {op->getLen1(), op->getLen2(), op->getLen3()}; 
+
+	int dirs[3]={PROP_X,PROP_Y,PROP_Z}; 
+
+	for(int j=0;j<3;j++){
+		Fl_Float_Input* c = _window->getPos(dirs[j]); 
+		Fl_Float_Input* a0 = _window->getAxis0(dirs[j]); 
+		Fl_Float_Input* a1 = _window->getAxis1(dirs[j]); 
+		Fl_Float_Input* a2 = _window->getAxis2(dirs[j]); 
+		Fl_Float_Input* len = _window->getLength(dirs[j]); 
+
+		c->activate(); 
+		a0->activate(); 
+		a1->activate(); 
+		a2->activate(); 
+		len->activate(); 
+
+		c->value(Str::toString(center[j]).c_str()); 
+		a0->value(Str::toString(vs[0][j]).c_str()); 
+		a1->value(Str::toString(vs[1][j]).c_str()); 
+		a2->value(Str::toString(vs[2][j]).c_str()); 
+		len->value(Str::toString(ds[j]).c_str()); 
+	}
+
+	Fl_Counter* r = _window->getRadius(); 
+	r->deactivate(); 
+
+}
+void WidgetUpdater::visit(Cone* op, void* ret){
+	Pt3 center = op->getCenter(); 
+	Vec3 vs[3]; 
+	vs[0] = op->getAxis1(); 
+	vs[1] = op->getAxis2(); 
+	vs[2] = op->getAxis3(); 
+
+	double ds[3] = {op->getLen1(), op->getLen2(), op->getLen3()}; 
+
+	int dirs[3]={PROP_X,PROP_Y,PROP_Z}; 
+
+	for(int j=0;j<3;j++){
+		Fl_Float_Input* c = _window->getPos(dirs[j]); 
+		Fl_Float_Input* a0 = _window->getAxis0(dirs[j]); 
+		Fl_Float_Input* a1 = _window->getAxis1(dirs[j]); 
+		Fl_Float_Input* a2 = _window->getAxis2(dirs[j]); 
+		Fl_Float_Input* len = _window->getLength(dirs[j]); 
+
+		c->activate(); 
+		a0->activate(); 
+		a1->activate(); 
+		a2->activate(); 
+		len->activate(); 
+
+		c->value(Str::toString(center[j]).c_str()); 
+		a0->value(Str::toString(vs[0][j]).c_str()); 
+		a1->value(Str::toString(vs[1][j]).c_str()); 
+		a2->value(Str::toString(vs[2][j]).c_str()); 
+		len->value(Str::toString(ds[j]).c_str()); 
+	}
+
+	Fl_Counter* r = _window->getRadius(); 
+	r->deactivate(); 
+
+}
 

@@ -251,7 +251,7 @@ public:
 		int rows = M.rows;
 		int cols = M.cols;
 
-		Matrix<Type,N> R(cols, rows);
+		Matrix<Type,N> R;
 		for(int r=0;r<rows;r++)
 			for(int c=0;c<cols;c++)
 				R[c][r] = M.data[r][c];

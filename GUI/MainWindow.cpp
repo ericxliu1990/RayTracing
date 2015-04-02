@@ -290,7 +290,7 @@ void MainWindow::addSphereCb(Fl_Widget* widget)
  */
 void MainWindow::addBoxCb(Fl_Widget* widget)
 {
-	Box* geom = new Box(Pt3(0.0f, 0.0f, 0.5f), 
+	Box* geom = new Box(Pt3(0.0f, 0.0f, 0.0f), 
 						Vec3(1.0f, 0.0f, 0.0f),
 						Vec3(0.0f, 1.0f, 0.0f),
 						Vec3(0.0f, 0.0f, 1.0f),
@@ -313,7 +313,7 @@ void MainWindow::addEllipsoidCb(Fl_Widget* widget)
 						Vec3(1.0f, 0.0f, 0.0f),
 						Vec3(0.0f, 1.0f, 0.0f),
 						Vec3(0.0f, 0.0f, 1.0f),
-						0.5f, 0.5f, 0.5f);
+						0.6f, 0.5f, 0.5f);
 	getScene()->addObject(geom);
 	getScene()->attachMaterial(geom); 
 	debugInfo("Add" + geom->toString());
@@ -328,10 +328,10 @@ void MainWindow::addEllipsoidCb(Fl_Widget* widget)
 void MainWindow::addCylinderCb(Fl_Widget* widget)
 {
 	Cylinder* geom = new Cylinder(Pt3(0.0f, 0.0f, 0.0f), 
-						Vec3(1.0f, 1.0f, 1.0f),
+						Vec3(1.0f, 0.0f, 0.0f),
 						Vec3(0.0f, 1.0f, 0.0f),
 						Vec3(0.0f, 0.0f, 1.0f),
-						0.5f, 0.5f, 1.0f);
+						1.0f, 1.0f, 1.0f);
 	getScene()->addObject(geom);
 	getScene()->attachMaterial(geom); 
 	debugInfo("Add" + geom->toString());
@@ -345,7 +345,11 @@ void MainWindow::addCylinderCb(Fl_Widget* widget)
  */
 void MainWindow::addConeCb(Fl_Widget* widget)
 {
-	Cone* geom = new Cone();
+	Cone* geom = new Cone(Pt3(0.0f, 0.0f, 0.5f), 
+						Vec3(1.0f, 0.0f, 0.0f),
+						Vec3(0.0f, 1.0f, 0.0f),
+						Vec3(0.0f, 0.0f, 1.0f),
+						0.5f, 1.0f, 0.5f);
 	getScene()->addObject(geom);
 	getScene()->attachMaterial(geom); 
 	debugInfo("Add" + geom->toString());

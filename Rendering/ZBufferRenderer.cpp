@@ -32,8 +32,8 @@ void ZBufferRenderer::draw() {
 	if(_drawGrid){
 		drawGrid(); 
 		glRotatef(90,1,0,0); 
-		drawGrid(); 
-		glRotatef(-90,1,0,0); 
+		drawGrid();
+		glRotatef(-90,1,0,0);
 	}
 
 	glDisable(GL_COLOR_MATERIAL); 
@@ -211,7 +211,8 @@ void ZBufferVisitor::visit(Cylinder* op, void* ret){
 	glMatrixMode(GL_MODELVIEW); 
 	glPushMatrix();
 	glMultMatrixf(op->getGLForwardMat()); 
-	gluCylinder(_quadric, 1.0f, 1.0f, 1.0f, 50, 50); 
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	gluCylinder(_quadric, 1.0f, 0.0f, 1.0f, 50, 50); 
 	glPopMatrix();
 }
 
@@ -220,6 +221,7 @@ void ZBufferVisitor::visit(Cone* op, void* ret){
 	glMatrixMode(GL_MODELVIEW); 
 	glPushMatrix();
 	glMultMatrixf(op->getGLForwardMat()); 
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
 	gluCylinder(_quadric, 1.0f, 0.0f, 1.0f, 50, 50); 
 	glPopMatrix();
 }

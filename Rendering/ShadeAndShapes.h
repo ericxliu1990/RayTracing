@@ -185,9 +185,20 @@ public:
 		updateTransform(); 
 	};
 	Pt3 getCenter() { return _center; }
-	double getLen1() { return _len1; }
-	double getLen2() { return _len2; }
-	double getLen3() { return _len3; }
+	inline Vec3 getAxis1() const {return _axis1;}
+	inline Vec3 getAxis2() const {return _axis2;}
+	inline Vec3 getAxis3() const {return _axis3;}
+	inline double getLen1() const { return _len1; }
+	inline double getLen2() const { return _len2; }
+	inline double getLen3() const { return _len3; }
+	inline void setCenter(Pt3 p){_center = p;}
+	inline void setAxis1(Vec3 v) {_axis1 = v;}
+	inline void setAxis2(Vec3 v) {_axis2 = v;}
+	inline void setAxis3(Vec3 v) {_axis3 = v;}
+	inline void setLen1(double l) { _len1 = l;}
+	inline void setLen2(double l) { _len2 = l;}
+	inline void setLen3(double l) { _len3 = l;}
+
 	void translate(const Vec3& trans); 
 	void rotate(double d, int axis); 
 	void updateTransform(); 
@@ -220,11 +231,24 @@ public:
 		_lenAxis1 = lenAxis1;
 		_lenAxis2 = lenAxis2;
 		_height = height;
+		updateTransform(); 
 	};
+
 	Pt3 getCenter() { return _baseCenter; }
-	double getLenAxis1() { return _lenAxis1; }
-	double getLenAxis2() { return _lenAxis2; }
-	double getHeight() { return _height; }
+	inline Vec3 getAxis1() const {return _baseAxis1;}
+	inline Vec3 getAxis2() const {return _baseAxis2;}
+	inline Vec3 getAxis3() const {return _centerAxis;}
+	inline double getLen1() const { return _lenAxis1; }
+	inline double getLen2() const { return _lenAxis2; }
+	inline double getLen3() const { return _height; }
+	inline void setCenter(Pt3 p){_baseCenter = p;}
+	inline void setAxis1(Vec3 v) {_baseAxis1 = v;}
+	inline void setAxis2(Vec3 v) {_baseAxis2 = v;}
+	inline void setAxis3(Vec3 v) {_centerAxis = v;}
+	inline void setLen1(double l) { _lenAxis1 = l;}
+	inline void setLen2(double l) { _lenAxis2 = l;}
+	inline void setLen3(double l) { _height = l;}
+
 	void translate(const Vec3& trans); 
 	void rotate(double d, int axis); 
 	void updateTransform(); 
@@ -258,8 +282,24 @@ public:
 		_lenAxis1 = lenAxis1;
 		_lenAxis2 = lenAxis2;
 		_height = height;
+		updateTransform(); 
 	};
+
 	Pt3 getCenter() { return _baseCenter; }
+	inline Vec3 getAxis1() const {return _baseAxis1;}
+	inline Vec3 getAxis2() const {return _baseAxis2;}
+	inline Vec3 getAxis3() const {return _centerAxis;}
+	inline double getLen1() const { return _lenAxis1; }
+	inline double getLen2() const { return _lenAxis2; }
+	inline double getLen3() const { return _height; }
+	inline void setCenter(Pt3 p){_baseCenter = p;}
+	inline void setAxis1(Vec3 v) {_baseAxis1 = v;}
+	inline void setAxis2(Vec3 v) {_baseAxis2 = v;}
+	inline void setAxis3(Vec3 v) {_centerAxis = v;}
+	inline void setLen1(double l) { _lenAxis1 = l;}
+	inline void setLen2(double l) { _lenAxis2 = l;}
+	inline void setLen3(double l) { _height = l;}
+
 	void translate(const Vec3& trans); 
 	void rotate(double d, int axis); 
 	void updateTransform(); 

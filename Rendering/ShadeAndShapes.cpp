@@ -4,6 +4,7 @@
 
 void Sphere::translate(const Vec3& trans){
 	_center+=trans;
+	updateTransform(); 
 }
 
 // rotate a sphere has no effect
@@ -42,7 +43,7 @@ void Box::rotate(double d, int axis){
 			break; 
 	}
 
-	Vec3 cv = _corner-_center; 
+	Vec3 cv = _corner - _center; 
 
 	// rotate the three linearly independent vectors that determine the shape
 	_lengthv = _lengthv*m;
@@ -55,15 +56,29 @@ void Box::rotate(double d, int axis){
 	updateTransform(); 
 }
 // TODO: fill in these functions
-void Cylinder::translate(const Vec3& trans) {}
-void Cylinder::rotate(double d, int axis) {}
-void Cone::translate(const Vec3& trans) {}
+void Cylinder::translate(const Vec3& trans) {
+	_baseCenter+=trans;
+	updateTransform();
+}
+void Cylinder::rotate(double d, int axis) {
+
+}
+void Cone::translate(const Vec3& trans) {
+	_baseCenter+=trans;
+	updateTransform();
+}
 void Cone::rotate(double d, int axis) {}
-void Ellipsoid::translate(const Vec3& trans) {}
+void Ellipsoid::translate(const Vec3& trans) {
+	_center+=trans;
+	updateTransform();
+}
 void Ellipsoid::rotate(double d, int axis) {}
 
-// definition of the sphere can be pretty sparse.  You don't need to define the transform associated with a sphere.
-void Sphere::updateTransform() {}
+// definition of the sphere can be pretty sparse.  
+//You don't need to define the transform associated with a sphere.
+void Sphere::updateTransform() {
+
+}
 
 /**
  * @brief calculate the first interction between a ray and a sphere
@@ -198,12 +213,16 @@ void Intersector::visit(Ellipsoid* op, void* ret){
 }
 
 void Cylinder::updateTransform() {
-
+	_mat = compose(_baseAxis1 * _lenAxis1, _baseAxis2 * _lenAxis2, _centerAxis * _height, _baseCenter);
+	_imat = !_mat;
+	Geometry::updateTransform();
 }
 void Intersector::visit(Cylinder* op, void* ret){}
 
 void Cone::updateTransform() {
-
+	_mat = compose(_baseAxis1 * _lenAxis1, _baseAxis2 * _lenAxis2, _centerAxis * _height, _baseCenter);
+	_imat = !_mat;
+	Geometry::updateTransform();
 }
 void Intersector::visit(Cone* op, void* ret){
 
