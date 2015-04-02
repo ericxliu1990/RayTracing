@@ -162,7 +162,8 @@ void Intersector::visit(Box* op, void* ret){
 		if (d>0.001 && iret->t0 > d){
 			iret->t0 = d;
 			iret->hit = true; 
-			iret->normal = Vec3(0,0,-1,0) * op->getForwardMat();
+			iret->normal = Vec3(0,0,-1,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
 		}
 	}
 
@@ -174,7 +175,8 @@ void Intersector::visit(Box* op, void* ret){
 		if (d>0.001 && iret->t0 > d){
 			iret->t0 = d;
 			iret->hit = true; 
-			iret->normal = Vec3(0,0,1,0) * op->getForwardMat();
+			iret->normal = Vec3(0,0,1,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
 		}
 	}
 
@@ -186,7 +188,8 @@ void Intersector::visit(Box* op, void* ret){
 		if (d>0.001 && iret->t0 > d){
 			iret->t0 = d;
 			iret->hit = true; 
-			iret->normal = Vec3(0,-1,0,0) * op->getForwardMat();
+			iret->normal = Vec3(0,-1,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
 		}
 	}
 
@@ -198,7 +201,8 @@ void Intersector::visit(Box* op, void* ret){
 		if (d>0.001 && iret->t0 > d){
 			iret->t0 = d;
 			iret->hit = true; 
-			iret->normal = Vec3(0,1,0,0) * op->getForwardMat();
+			iret->normal = Vec3(0,1,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
 		}
 	}
 
@@ -210,7 +214,8 @@ void Intersector::visit(Box* op, void* ret){
 		if (d>0.001 && iret->t0 > d){
 			iret->t0 = d;
 			iret->hit = true; 
-			iret->normal = Vec3(-1,0,0,0) * op->getForwardMat();
+			iret->normal = Vec3(-1,0,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
 		}
 	}
 
@@ -222,7 +227,8 @@ void Intersector::visit(Box* op, void* ret){
 		if (d>0.001 && iret->t0 > d){
 			iret->t0 = d;
 			iret->hit = true; 
-			iret->normal = Vec3(1,0,0,0) * op->getForwardMat();
+			iret->normal = Vec3(1,0,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
 		}
 	}
 }
