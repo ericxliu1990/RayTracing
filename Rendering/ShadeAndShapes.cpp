@@ -105,8 +105,16 @@ void Intersector::visit(Sphere* sphere, void* ret){
 	}
 	else{
 		double h = sqrt(r2 - d2); 
-		iret->t0 = closest-h; 
-		iret->hit = true; 
+		if (closest+h<0){
+			iret->hit = false;
+			return;
+		} else if (closest-h<0.001){
+			iret->t0 = closest+h; 
+			iret->hit = true;
+		} else {
+			iret->t0 = closest-h; 
+			iret->hit = true; 
+		}
 		iret->normal = (_ray.at(iret->t0) - center); 
 		iret->normal.normalize(); 
 	}
@@ -149,8 +157,12 @@ void Intersector::visit(Box* op, void* ret){
 	iret->t0 = FINF32; 
 
 	if(pp[0]>=0&&pp[0]<=1&&pp[1]>=0&&pp[1]<=1){
-		iret->t0 = min(iret->t0,d); 
-		iret->hit = true; 
+		if (d>0.001 && iret->t0 > d){
+			iret->t0 = d;
+			iret->hit = true; 
+			iret->normal = Vec3(0,0,-1,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
+		}
 	}
 
 	p = Plane(Pt3(.5,.5,1),Vec3(0,0,-1,0)); 
@@ -158,8 +170,12 @@ void Intersector::visit(Box* op, void* ret){
 	pp = ray.at(d); 
 
 	if(pp[0]>=0&&pp[0]<=1&&pp[1]>=0&&pp[1]<=1){
-		iret->t0 = min(iret->t0,d); 
-		iret->hit = true; 
+		if (d>0.001 && iret->t0 > d){
+			iret->t0 = d;
+			iret->hit = true; 
+			iret->normal = Vec3(0,0,1,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
+		}
 	}
 
 	p = Plane(Pt3(.5,0,.5),Vec3(0,1,0,0)); 
@@ -167,8 +183,12 @@ void Intersector::visit(Box* op, void* ret){
 	pp = ray.at(d); 
 
 	if(pp[0]>=0&&pp[0]<=1&&pp[2]>=0&&pp[2]<=1){
-		iret->t0 = min(iret->t0,d); 
-		iret->hit = true; 
+		if (d>0.001 && iret->t0 > d){
+			iret->t0 = d;
+			iret->hit = true; 
+			iret->normal = Vec3(0,-1,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
+		}
 	}
 
 	p = Plane(Pt3(.5,1,.5),Vec3(0,-1,0,0)); 
@@ -176,8 +196,12 @@ void Intersector::visit(Box* op, void* ret){
 	pp = ray.at(d); 
 
 	if(pp[0]>=0&&pp[0]<=1&&pp[2]>=0&&pp[2]<=1){
-		iret->t0 = min(iret->t0,d); 
-		iret->hit = true; 
+		if (d>0.001 && iret->t0 > d){
+			iret->t0 = d;
+			iret->hit = true; 
+			iret->normal = Vec3(0,1,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
+		}
 	}
 
 	p = Plane(Pt3(0,.5,.5),Vec3(1,0,0,0)); 
@@ -185,8 +209,12 @@ void Intersector::visit(Box* op, void* ret){
 	pp = ray.at(d); 
 
 	if(pp[1]>=0&&pp[1]<=1&&pp[2]>=0&&pp[2]<=1){
-		iret->t0 = min(iret->t0,d); 
-		iret->hit = true; 
+		if (d>0.001 && iret->t0 > d){
+			iret->t0 = d;
+			iret->hit = true; 
+			iret->normal = Vec3(-1,0,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
+		}
 	}
 
 	p = Plane(Pt3(1,.5,.5),Vec3(-1,0,0,0)); 
@@ -194,8 +222,12 @@ void Intersector::visit(Box* op, void* ret){
 	pp = ray.at(d); 
 
 	if(pp[1]>=0&&pp[1]<=1&&pp[2]>=0&&pp[2]<=1){
-		iret->t0 = min(iret->t0,d); 
-		iret->hit = true; 
+		if (d>0.001 && iret->t0 > d){
+			iret->t0 = d;
+			iret->hit = true; 
+			iret->normal = Vec3(1,0,0,0) * transpose(op->getInverseMat());
+			iret->normal.normalize();
+		}
 	}
 }
 
