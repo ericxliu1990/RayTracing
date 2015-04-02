@@ -410,11 +410,51 @@ void Intersector::visit(Cone* op, void* ret){
 
 	// Intersecting with the cone
 	Mat4 projection = compose(Vec3(1,0,0,0), Vec3(0,0,0,0), Vec3(0,0,1,0), Pt3(0,0,0));
-	projection[2][3] = -1;
+	projection[1][3] = -1;
 	Pt3 mp1 = ppp * projection;
 	Pt3 mp2 = vvv * projection;
-	if (mp1[3] == 0 && mp2[3] == 0){
-		
+	Pt3 newP;
+	Vec3 newV;
+	if (mp1[3] != 0 && mp2[3] == 0) {
+		newP = mp1*(1/mp1[3]);
+		newV = mp2;
+	} else if (mp1[3] == 0 && mp2[3] != 0) {
+		newP = mp2*(1/mp2[3]);
+		newV = mp1;
+	} else if (mp1[3] != 0 && mp2[3] != 0) {
+		newP = mp1*(1/mp1[3]);
+		newV = mp2*(1/mp2[3]) - mp1*(1/mp1[3]);
+	}
+	Ray newRay(newP, newV);
+
+	double tclosest = GeometryUtils::pointRayClosest(Pt3(0,0,0), newRay);
+	double dist = mag(newRay.at(tclosest) - Pt3(0,0,0));
+	double h = sqrt(1-dist*dist); // distance
+	h /= mag(newV); // parameter along ray
+	
+	Pt3 planeInt = newRay.at(tclosest-h);
+	Vec3 cancelVec = cross((planeInt - Pt3(0,1,0)),Vec3(0,1,0,0));
+	double t = - ((ppp - Pt3(0,1,0)) * cancelVec ) / (vvv * cancelVec);
+	if (t > 0.001 && t < iret->t0){
+		double zhit = ray.at(t)[1];
+		if (zhit>=0 && zhit <= 1){
+			iret->hit = true;
+			iret->normal = ray.at(t) - Pt3(0,1,0);
+			iret->normal = iret->normal + mag(iret->normal) * 1.41421356 * Vec3(0,1,0,0);
+			iret->t0 = t;
+		}
+	}
+	planeInt = newRay.at(tclosest+h);
+	cancelVec = cross((planeInt - Pt3(0,1,0)),Vec3(0,1,0,0));
+	t = - ((ppp - Pt3(0,1,0)) * cancelVec ) / (vvv * cancelVec);
+	if (t > 0.001 && t < iret->t0){
+		double zhit = ray.at(t)[1];
+		if (zhit>=0 && zhit <= 1){
+			iret->hit = true;
+			iret->normal = ray.at(t) - Pt3(0,1,0);
+			iret->normal = iret->normal + mag(iret->normal) * 1.41421356 * Vec3(0,1,0,0);
+			iret->t0 = t;
+		}
 	}
 
 
