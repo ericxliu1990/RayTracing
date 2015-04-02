@@ -61,8 +61,8 @@ protected:
 	static ZBufferRenderer* _zbuffer; 
 	static std::map<Geometry*,Operator*> _geom2op; 
 	static Intersector* _intersector;
-	static Geometry* _selected; 
 	static Geometry* _highlighted; 
+	static Light* _lightHighlighted; 
 	static bool _holdCtrl; 
 	static bool _holdAlt; 
 	static bool _holdShift; 
@@ -72,6 +72,7 @@ protected:
 	static RaytraceViewer* _rtviewer; 
 
 	Fl_Menu_Button* _selectButton;
+	Fl_Menu_Button* _lightSelectButton;
 
 public: 
 	MainWindow(int x, int y, int w, int h, const char* l=0); 
@@ -118,9 +119,12 @@ protected:
 	static void addEllipsoidCb(Fl_Widget* widget);
 	static void addCylinderCb(Fl_Widget* widget);
 	static void addConeCb(Fl_Widget* widget);
+	static void addTorusCb(Fl_Widget* widget);
 	static void selectButtonCb(Fl_Widget* widget, void* geom);
+	static void lightSelectButtonCb(Fl_Widget* widget, void* geom);
 	static void delObjectCb(Fl_Widget* widget);
 	static void openPropertyCb(Fl_Widget* widget);
+	static void openLightPropertyCb(Fl_Widget* widget);
 	static void prepScene(); 
 	static void openFile(const std::string& fname); 
 	static void saveFile(const std::string& fname); 

@@ -77,6 +77,20 @@ void Ellipsoid::rotate(double d, int axis) {
 
 	updateTransform(); 
 }
+void Torus::translate(const Vec3& trans) {
+	_center+=trans;
+	updateTransform();
+}
+void Torus::rotate(double d, int axis) {
+	std::auto_ptr<Mat4> m;
+	m =  GeometryUtils::getRotateMatrix(d, axis);
+
+	_axis1 = _axis1 * (*m);
+	_axis2 = _axis2 * (*m);
+	_axis3 = _axis3 * (*m);
+
+	updateTransform(); 
+}
 
 // definition of the sphere can be pretty sparse.  
 //You don't need to define the transform associated with a sphere.
@@ -464,7 +478,18 @@ void Intersector::visit(Cone* op, void* ret){
 	iret->normal = iret->normal * transpose(op->getInverseMat());
 	iret->normal.normalize();
 }
+/**
+ * @brief update the transform matrix of ellipsoid
+ * @details [long description]
+ */
+void Torus::updateTransform() {
+	_mat = compose(_axis1 * _len1, _axis2 * _len2, _axis3 * _len3, _center);
+	_imat = !_mat;
+	Geometry::updateTransform();
+}
+void Intersector::visit(Torus* op, void* ret){
 
+}
 // The operator is the widget that allows you to translate and rotate a geometric object
 // It is colored as red/green/blue.  When one of the axis is highlighted, it is yellow.
 void Intersector::visit(Operator* op, void* ret){

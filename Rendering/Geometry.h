@@ -49,6 +49,7 @@ class Ellipsoid;
 class Box; 
 class Cylinder; 
 class Cone; 
+class Torus; 
 class Operator; 
 
 class GeometryVisitor{
@@ -58,6 +59,7 @@ public:
 	virtual void visit(Box* op, void* ret)=0;
 	virtual void visit(Cylinder* op, void* ret)=0;
 	virtual void visit(Cone* op, void* ret)=0;
+	virtual void visit(Torus* op, void* ret)=0;
 	virtual void visit(Operator* op, void* ret)=0;
 }; 
 

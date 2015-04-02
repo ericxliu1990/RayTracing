@@ -226,6 +226,16 @@ void ZBufferVisitor::visit(Cone* op, void* ret){
 	glPopMatrix();
 }
 
+// TODO: fill in this function
+void ZBufferVisitor::visit(Torus* op, void* ret){
+	glMatrixMode(GL_MODELVIEW); 
+	glPushMatrix();
+	glMultMatrixf(op->getGLForwardMat()); 
+	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+	glutSolidTorus(1.0f, 2.0f, 50, 50); 
+	glPopMatrix();
+}
+
 void drawAxis(GLUquadric* quad){
 	glPushMatrix(); 
 	float step = OP_STEP; 
@@ -350,3 +360,4 @@ void GLSceneObjectVisitor::visit(Ellipsoid* op, void* ret){}
 void GLSceneObjectVisitor::visit(Box* op, void* ret){}
 void GLSceneObjectVisitor::visit(Cylinder* op, void* ret){}
 void GLSceneObjectVisitor::visit(Cone* op, void* ret){}
+void GLSceneObjectVisitor::visit(Torus* op, void* ret){}

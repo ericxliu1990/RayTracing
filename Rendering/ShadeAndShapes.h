@@ -64,7 +64,7 @@ public:
 
 	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this,ret); }
 	string toString(){
-		return "Light";
+		return "Light" + _pos.toString();
 	}
 };
 
@@ -313,6 +313,56 @@ public:
 
 }; 
 
+// TODO: finish the definition of the following classes
+class Torus : public Geometry, public Operand{
+private:
+	Pt3 _center;
+	Vec3 _axis1;
+	Vec3 _axis2;
+	Vec3 _axis3;
+	double _len1;
+	double _len2;
+	double _len3;
+
+public: 
+	Torus() {}; 
+	Torus(const Pt3& center, const Vec3& axis1, const Vec3& axis2,
+				const Vec3& axis3, double len1, double len2, double len3) {
+		_center = center;
+		_axis1 = axis1;
+		_axis2 = axis2;
+		_axis3 = axis3;
+		_len1 = len1;
+		_len2 = len2;
+		_len3 = len3;
+		updateTransform(); 
+	};
+	Pt3 getCenter() { return _center; }
+	inline Vec3 getAxis1() const {return _axis1;}
+	inline Vec3 getAxis2() const {return _axis2;}
+	inline Vec3 getAxis3() const {return _axis3;}
+	inline double getLen1() const { return _len1; }
+	inline double getLen2() const { return _len2; }
+	inline double getLen3() const { return _len3; }
+	inline void setCenter(Pt3 p){_center = p;}
+	inline void setAxis1(Vec3 v) {_axis1 = v;}
+	inline void setAxis2(Vec3 v) {_axis2 = v;}
+	inline void setAxis3(Vec3 v) {_axis3 = v;}
+	inline void setLen1(double l) { _len1 = l;}
+	inline void setLen2(double l) { _len2 = l;}
+	inline void setLen3(double l) { _len3 = l;}
+
+	void translate(const Vec3& trans); 
+	void rotate(double d, int axis); 
+	void updateTransform(); 
+
+	virtual void accept(GeometryVisitor* visitor, void* ret){ visitor->visit(this, ret); }
+	virtual void accept(SceneObjectVisitor* visitor, void* ret) { visitor->visit(this, ret); }
+	string toString(){
+		return "Torus" + getCenter().toString();
+	}
+
+}; 
 
 struct IsectData{
 	// you can add more to this struct
@@ -338,6 +388,7 @@ public:
 	virtual void visit(Box* op, void* ret); 
 	virtual void visit(Cylinder* op, void* ret); 
 	virtual void visit(Cone* op, void* ret); 
+	virtual void visit(Torus* op, void* ret); 
 	virtual void visit(Operator* op, void* ret); 
 }; 
 

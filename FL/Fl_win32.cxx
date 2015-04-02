@@ -1036,7 +1036,7 @@ static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPar
   }
 
   return DefWindowProc(hWnd, uMsg, wParam, lParam);
-}
+ }
 
 ////////////////////////////////////////////////////////////////
 // This function gets the dimensions of the top/left borders and
