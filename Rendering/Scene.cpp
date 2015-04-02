@@ -215,6 +215,8 @@ Scene* SceneUtils::readScene(const std::string& fname){
 				geom = new Cylinder(); 
 			else if(type=="cone")
 				geom = new Cone(); 
+			else if(type=="torus")
+				geom = new Torus(); 
 
 			geom->accept(&reader,NULL); 
 
@@ -299,6 +301,17 @@ void ReadSceneObjectVisitor::visit(Cylinder* op, void* ret){
 
 // TODO: need to properly fill this out
 void ReadSceneObjectVisitor::visit(Cone* op, void* ret){
+	op->setCenter(readPt3(_stream)); //corner
+	op->setAxis1(readVec3(_stream)); //v1
+	op->setAxis2(readVec3(_stream)); //v2
+	op->setAxis3(readVec3(_stream)); //v3
+	op->setLen1(readFloat(_stream)); //l1
+	op->setLen2(readFloat(_stream)); //l2
+	op->setLen3(readFloat(_stream)); //l3
+	op->updateTransform(); 
+}
+// TODO: need to properly fill this out
+void ReadSceneObjectVisitor::visit(Torus* op, void* ret){
 	op->setCenter(readPt3(_stream)); //corner
 	op->setAxis1(readVec3(_stream)); //v1
 	op->setAxis2(readVec3(_stream)); //v2
@@ -412,4 +425,21 @@ void WriteSceneObjectVisitor::visit(Cone* op, void* ret){
 	writeFloat(_stream,op->getLen3()); 
 	(*_stream)<<endl;
 }
-
+// TODO: fill in all the functions below
+void WriteSceneObjectVisitor::visit(Torus* op, void* ret){
+	writeString(_stream,"torus"); (*_stream)<<endl;
+	writePt3(_stream,op->getCenter()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis1()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis2()); 
+	(*_stream)<<endl;
+	writeVec3(_stream,op->getAxis3()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen1()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen2()); 
+	(*_stream)<<endl;
+	writeFloat(_stream,op->getLen3()); 
+	(*_stream)<<endl;
+}

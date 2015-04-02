@@ -60,6 +60,7 @@ public:
 	virtual void visit(Box* op, void* ret); 
 	virtual void visit(Cylinder* op, void* ret); 
 	virtual void visit(Cone* op, void* ret); 
+	virtual void visit(Torus* op, void* ret); 
 	virtual void visit(Operator* op, void* ret); 
 }; 
 
@@ -76,6 +77,7 @@ public:
 	virtual void visit(Box* op, void* ret); 
 	virtual void visit(Cylinder* op, void* ret); 
 	virtual void visit(Cone* op, void* ret); 
+	virtual void visit(Torus* op, void* ret); 
 }; 
 
 

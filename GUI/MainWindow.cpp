@@ -222,7 +222,7 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Torus");
-	addTorus->callback(addConeCb);
+	addTorus->callback(addTorusCb);
 
 	_selectButton = new Fl_Menu_Button(w + Button_SPACE,
 										MENU_SPACE + BUTTON_HEIGHT* 7  + Button_SPACE * 8, 
@@ -394,6 +394,25 @@ void MainWindow::addConeCb(Fl_Widget* widget)
 	debugInfo("Add" + geom->toString());
 	prepScene();
 }
+/**
+ * @brief callback funttion of add object button
+ * @details add a default Cone to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addTorusCb(Fl_Widget* widget)
+{
+	Torus* geom = new Torus(Pt3(0.0f, 0.0f, 0.5f), 
+						Vec3(1.0f, 0.0f, 0.0f),
+						Vec3(0.0f, 1.0f, 0.0f),
+						Vec3(0.0f, 0.0f, 1.0f),
+						0.2f, 0.2f, 0.2f);
+	getScene()->addObject(geom);
+	getScene()->attachMaterial(geom); 
+	debugInfo("Add" + geom->toString());
+	prepScene();
+}
+
 /**
  * @brief callback function of the select button
  * @details select objects from the scene

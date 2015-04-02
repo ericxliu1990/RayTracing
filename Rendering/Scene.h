@@ -13,6 +13,7 @@ class Ellipsoid;
 class Box; 
 class Cylinder; 
 class Cone; 
+class Torus; 
 
 class SceneObjectVisitor{
 public: 
@@ -23,6 +24,7 @@ public:
 	virtual void visit(Box* op, void* ret)=0;
 	virtual void visit(Cylinder* op, void* ret)=0;
 	virtual void visit(Cone* op, void* ret)=0;
+	virtual void visit(Torus* op, void* ret)=0;
 }; 
 
 class SceneObject{
@@ -85,6 +87,7 @@ public:
 	virtual void visit(Box* op, void* ret); 
 	virtual void visit(Cylinder* op, void* ret); 
 	virtual void visit(Cone* op, void* ret); 
+	virtual void visit(Torus* op, void* ret); 
 }; 
 
 // Visitor for writing to an output stream, could be a file
@@ -101,6 +104,7 @@ public:
 	virtual void visit(Box* op, void* ret); 
 	virtual void visit(Cylinder* op, void* ret); 
 	virtual void visit(Cone* op, void* ret); 
+	virtual void visit(Torus* op, void* ret); 
 }; 
 
 

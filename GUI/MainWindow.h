@@ -119,6 +119,7 @@ protected:
 	static void addEllipsoidCb(Fl_Widget* widget);
 	static void addCylinderCb(Fl_Widget* widget);
 	static void addConeCb(Fl_Widget* widget);
+	static void addTorusCb(Fl_Widget* widget);
 	static void selectButtonCb(Fl_Widget* widget, void* geom);
 	static void lightSelectButtonCb(Fl_Widget* widget, void* geom);
 	static void delObjectCb(Fl_Widget* widget);
