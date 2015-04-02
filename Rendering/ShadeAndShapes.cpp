@@ -251,7 +251,7 @@ void Intersector::visit(Ellipsoid* op, void* ret){
 	Pt3 np = _ray.p*op->getInverseMat(); 
 	Pt3 ppp = np*(1/np[3]); 
 	Vec3 vvv = _ray.dir*op->getInverseMat(); 
-	double sizev = sqrt(vvv*vvv);
+	double sizev = mag(vvv);
 	vvv.normalize();
 	Ray ray(ppp,vvv); 
 
@@ -295,7 +295,87 @@ void Cylinder::updateTransform() {
 	_imat = !_mat;
 	Geometry::updateTransform();
 }
-void Intersector::visit(Cylinder* op, void* ret){}
+void Intersector::visit(Cylinder* op, void* ret){
+	IsectData* iret = (IsectData*) ret; 
+	iret->t0 = FINF32;
+	iret->hit = false;
+	
+	// Transform into canonical frame
+	// Note that the vector of the trasformed line is normalized
+	Pt3 np = _ray.p*op->getInverseMat(); 
+	Pt3 ppp = np*(1/np[3]); 
+	Vec3 vvv = _ray.dir*op->getInverseMat(); 
+	double sizev = mag(vvv);
+	vvv.normalize();
+	Ray ray(ppp,vvv); 
+
+	// Fast rejection, check distance between rays
+	Ray axis(Pt3(0,0,0), Vec3(0,1,0,0));
+	double dist = GeometryUtils::rayRayDist(axis, ray);
+	if (dist >= 1) {
+		return;
+	}
+
+	Vec3 vcross = cross(axis.dir,ray.dir); 
+	double denom = mag(vcross);
+
+	// Intersect with top and bottom
+	Plane p = Plane(Pt3(0,0,0),Vec3(0,1,0,0)); 
+	double d = GeometryUtils::planeRay(p,ray); 
+	double intdist = mag(ray.at(d) - Pt3(0,0,0));
+	if (d>0.001 && intdist<1) {
+		iret->hit = true;
+		iret->normal = Vec3(0,-1,0,0);
+		iret->t0 = d;
+	}
+	p = Plane(Pt3(0,1,0),Vec3(0,1,0,0));
+	d = GeometryUtils::planeRay(p,ray); 
+	intdist = mag(ray.at(d) - Pt3(0,1,0));
+	if (d>0.001 && intdist<1 && d<iret->t0) {
+		iret->hit = true;
+		iret->normal = Vec3(0,1,0,0);
+		iret->t0 = d;
+	}
+
+	if (denom != 0){ // if ray is not parallel to the axis, also check side surface
+		// project into xy plane, and intersect with circle
+		Mat4 projection = compose(Vec3(1,0,0,0), Vec3(0,0,0,0), Vec3(0,0,1,0), Pt3(0,1,0));
+		Pt3 pppp = ppp*projection;
+		Vec3 vvvv = vvv*projection;
+		Ray planeRay(pppp,vvvv);
+		double tclosest = GeometryUtils::pointRayClosest(Pt3(0,0,0), planeRay);
+		double h = sqrt(1-dist*dist); // distance
+		h /= mag(vvvv); // parameter along ray
+		
+		double param = tclosest-h;
+		if (param > 0.001 && param < iret->t0){
+			double zhit = ray.at(param)[1];
+			if (zhit>=0 && zhit <= 1){
+				iret->hit = true;
+				iret->normal = planeRay.at(param) - Pt3(0,0,0);
+				iret->t0 = param;
+			}
+		}
+		param = tclosest + h;
+		if (param > 0.001 && param < iret->t0){
+			double zhit = ray.at(param)[1];
+			if (zhit>=0 && zhit <= 1){
+				iret->hit = true;
+				iret->normal = planeRay.at(param) - Pt3(0,0,0);;
+				iret->t0 = param;
+			}
+		}
+
+	}
+
+	
+	// In reality, the hit point t0 is adjusted for the size of vvv
+	iret->t0 /= sizev;
+	// In reality, the normal is adjusted to be in the right frame
+	iret->normal = iret->normal * transpose(op->getInverseMat());
+	iret->normal.normalize();
+
+}
 
 void Cone::updateTransform() {
 	_mat = compose(_baseAxis1 * _lenAxis1, _baseAxis2 * _lenAxis2, _centerAxis * _height, _baseCenter);
@@ -303,7 +383,44 @@ void Cone::updateTransform() {
 	Geometry::updateTransform();
 }
 void Intersector::visit(Cone* op, void* ret){
+	IsectData* iret = (IsectData*) ret; 
+	iret->t0 = FINF32;
+	iret->hit = false;
+	
+	// Transform into canonical frame
+	// Note that the vector of the trasformed line is normalized
+	Pt3 np = _ray.p*op->getInverseMat(); 
+	Pt3 ppp = np*(1/np[3]); 
+	Vec3 vvv = _ray.dir*op->getInverseMat(); 
+	double sizev = mag(vvv);
+	vvv.normalize();
+	Ray ray(ppp,vvv); 
 
+	// Intersecting against the circle
+	Plane p = Plane(Pt3(0,0,0),Vec3(0,1,0,0)); 
+	double d = GeometryUtils::planeRay(p,ray); 
+	double intdist = mag(ray.at(d) - Pt3(0,0,0));
+	if (d>0.001 && intdist<1) {
+		iret->hit = true;
+		iret->normal = Vec3(0,-1,0,0);
+		iret->t0 = d;
+	}
+
+	// Intersecting with the cone
+	Mat4 projection = compose(Vec3(1,0,0,0), Vec3(0,0,0,0), Vec3(0,0,1,0), Pt3(0,0,0));
+	projection[2][3] = -1;
+	Pt3 mp1 = ppp * projection;
+	Pt3 mp2 = vvv * projection;
+	if (mp1[3] == 0 && mp2[3] == 0){
+		
+	}
+
+
+	// In reality, the hit point t0 is adjusted for the size of vvv
+	iret->t0 /= sizev;
+	// In reality, the normal is adjusted to be in the right frame
+	iret->normal = iret->normal * transpose(op->getInverseMat());
+	iret->normal.normalize();
 }
 
 // The operator is the widget that allows you to translate and rotate a geometric object

@@ -169,7 +169,6 @@ TraceResult Raytracer::trace(const Ray& ray, int depth){
 				if (shadowFactor >= 0.001f){
 					res.color += (lightVec * normal) * shadowFactor * multiply(_scene->getLight(i)->getColor(), bestMat->getDiffuse());
 					if (lightVec * reflectVec >0){
-						cout<<"specular"<<endl;
 						res.color += pow((lightVec * reflectVec), bestMat->getSpecExponent()) * 
 								shadowFactor * multiply(_scene->getLight(i)->getColor(),bestMat->getSpecular());
 					}
