@@ -1,6 +1,6 @@
 #include "GUI/MainWindow.h" 
 #include "GUI/PropertyWindow.h"  
-#include "GUI/lightPropertyWindow.h"  
+//#include "GUI/lightPropertyWindow.h"  
 #include "Button.h"
 #include <time.h>
 #include <iostream> 
