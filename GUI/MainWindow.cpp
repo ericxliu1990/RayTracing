@@ -1,5 +1,6 @@
 #include "GUI/MainWindow.h" 
 #include "GUI/PropertyWindow.h"  
+#include "GUI/lightPropertyWindow.h"  
 #include "Button.h"
 #include <time.h>
 #include <iostream> 
@@ -255,7 +256,7 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 									Button_WIDTH, 
 									BUTTON_HEIGHT, 
 									"Add Light");
-	addLight->callback(addConeCb);
+	addLight->callback(addLightCb);
 
 	_lightSelectButton = new Fl_Menu_Button(w + Button_SPACE,
 										MENU_SPACE + BUTTON_HEIGHT* 12  + Button_SPACE * 13, 
@@ -279,7 +280,7 @@ Fl_Window(x,y,w + RIGHT_PANEL_WIDTH, h + MENU_SPACE + WIN_LOWER_SPACE, l){
 										Button_WIDTH, 
 										BUTTON_HEIGHT, 
 										"Delete Selected Light");
-	delectLight->callback(delObjectCb);
+	delectLight->callback(delLightCb);
 
 	end();
 }
@@ -412,7 +413,21 @@ void MainWindow::addTorusCb(Fl_Widget* widget)
 	debugInfo("Add" + geom->toString());
 	prepScene();
 }
-
+/**
+ * @brief callback funttion of add object button
+ * @details add a default Cone to the scene
+ * 
+ * @param widget required first parameter
+ */
+void MainWindow::addLightCb(Fl_Widget* widget)
+{
+	Color amb(0.3f, 0.3f, 0.3f);
+	Light* light = new Light(Pt3(1, 1, 1), Color(0.4f, 0.4f, 0.4f));
+	light->setId(_scene->getNumLights());
+	light->setAmbient(amb);
+	getScene()->addLight(light);
+	debugInfo("Add light" + light->toString());
+}
 /**
  * @brief callback function of the select button
  * @details select objects from the scene
@@ -466,6 +481,35 @@ void MainWindow::delObjectCb(Fl_Widget* widget)
 		PropertyWindow::closePropertyWindow(); 
 		_highlighted = NULL;
 		prepScene();
+	}else{
+		cout << "You Need select one object" << endl;
+	}
+}
+/**
+ * @brief callback funtion of delete button
+ * @details delete the selected object from the scene
+ * 
+ * @param widget require first parameter
+ */
+void MainWindow::delLightCb(Fl_Widget* widget)
+{
+	if(_lightHighlighted)
+	{
+		// Geometry* deleteobj;
+		// deleteobj = _highlighted ? _highlighted : _zbuffer->getSelected();
+		// // get the selected object and delect it
+		// debugInfo("Delete" + deleteobj->toString());
+		// getScene()->deleteObject(deleteobj);
+		// //clear operator and close the property window
+		// if (_zbuffer->getOperator())
+		// {
+		// 	_zbuffer->getOperator()->setState(OP_NONE);
+		// 	_zbuffer->setSelected(NULL); 
+		// 	_zbuffer->setOperator(NULL,0); 
+		// }
+		// PropertyWindow::closePropertyWindow(); 
+		// _highlighted = NULL;
+		// prepScene();
 	}else{
 		cout << "You Need select one object" << endl;
 	}

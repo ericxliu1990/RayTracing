@@ -104,7 +104,7 @@ protected:
 	// I defined box with both a corner and center just for convenience.  This is redundant.  
 	// You are free to implement the box or any other shape however you want.  Just make sure it works.
 	Pt3 _corner; 
-	Pt3 _center; 
+	// Pt3 _center; 
 	Vec3 _lengthv; 
 	Vec3 _widthv; 
 	Vec3 _heightv; 
@@ -128,19 +128,19 @@ public:
 			updateTransform(); 
 	}
 
-	Pt3 getCenter() { return _center; }
+	Pt3 getCenter() { return _corner; }
 	void translate(const Vec3& trans) ;
 	void rotate(double d, int axis); 
 
 	Vec3 getLengthVec() { return _lengthv; }
 	Vec3 getWidthVec() { return _widthv; }
 	Vec3 getHeightVec() { return _heightv; }
-	Pt3 getCorner(){ return _corner; } 
+	// Pt3 getCorner(){ return _corner; } 
 
 	void setLengthVec(const Vec3& v) { _lengthv = v; }
 	void setWidthVec(const Vec3& v) { _widthv = v; }
 	void setHeightVec(const Vec3& v) { _heightv = v; }
-	void setCorner(const Pt3& v) { _corner = v; }
+	void setCenter(const Pt3& v) { _corner = v; }
 
 	double getLength() { return _length; }
 	double getWidth() { return _width; }

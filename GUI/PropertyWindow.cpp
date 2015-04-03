@@ -350,7 +350,7 @@ void GeometryUpdater::visit(Box* box, void* ret){
 	vs[0][3]=vs[1][3]=vs[2][3]=0;
 	corner[3]=1;
 
-	box->setCorner(corner); 
+	box->setCenter(corner); 
 	box->setLengthVec(vs[0]); 
 	box->setWidthVec(vs[1]); 
 	box->setHeightVec(vs[2]); 
@@ -517,7 +517,7 @@ void WidgetUpdater::visit(Sphere* sphere, void* ret){
 
 // Here is the box example
 void WidgetUpdater::visit(Box* box, void* ret){
-	Pt3 corner = box->getCorner(); 
+	Pt3 conter = box->getCenter(); 
 	Vec3 vs[3]; 
 	vs[0] = box->getLengthVec(); 
 	vs[1] = box->getWidthVec(); 
@@ -540,7 +540,7 @@ void WidgetUpdater::visit(Box* box, void* ret){
 		a2->activate(); 
 		len->activate(); 
 
-		c->value(Str::toString(corner[j]).c_str()); 
+		c->value(Str::toString(conter[j]).c_str()); 
 		a0->value(Str::toString(vs[0][j]).c_str()); 
 		a1->value(Str::toString(vs[1][j]).c_str()); 
 		a2->value(Str::toString(vs[2][j]).c_str()); 
