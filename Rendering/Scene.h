@@ -13,7 +13,7 @@ class Ellipsoid;
 class Box; 
 class Cylinder; 
 class Cone; 
-class Torus; 
+class Torus;
 
 class SceneObjectVisitor{
 public: 
@@ -49,8 +49,15 @@ protected:
 public: 
 	Scene() { }
 
-	void addLight(Light* light) { _lights.push_back(light); }
-	void addObject(Geometry* obj){	_objs.push_back(obj); }
+	void addLight(Light* light) { 
+		// debugInfo("push_back" + light->toString());
+		_lights.push_back(light); 
+	}
+	void deleteLight(Light* light);
+	void addObject(Geometry* obj){	
+		//debugInfo("push_back" + obj->toString());
+		_objs.push_back(obj); 
+	}
 	void deleteObject(Geometry* obj);
 	void attachMaterial(Geometry* obj, Material* mat);
 	void attachMaterial(Geometry* obj);

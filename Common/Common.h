@@ -14,7 +14,7 @@
 #define FINF32 1000000000.f
 #endif
 #ifndef DEBUG_MODE
-#define DEBUG_MODE true
+#define DEBUG_MODE false
 #endif
 using namespace std; 
 

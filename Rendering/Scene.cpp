@@ -62,6 +62,20 @@ void writeInt(ostream* stream, int d){
 void writeString(ostream* stream, const string& s){
 	(*stream)<<s;
 }
+/**
+ * @brief delect light
+ * @details delect the gemoetry object from the object vector and its material  
+ * 
+ * @param obj the gemotry object need to be deleted
+ */
+void Scene::deleteLight(Light* light){
+	int pos = find(_lights.begin(), _lights.end(), light) - _lights.begin();
+	if (pos < _lights.size())
+	{
+		cout << "delete light " << pos << endl;
+		_lights.erase(_lights.begin() + pos);
+	}
+}
 
 /**
  * @brief delect geometry object
@@ -73,7 +87,7 @@ void Scene::deleteObject(Geometry* obj){
 	int pos = find(_objs.begin(), _objs.end(), obj) - _objs.begin();
 	if (pos < _objs.size())
 	{
-		cout << "find " << pos << endl;
+		cout << "delete object " << pos << endl;
 		deleteMaterial(obj);
 		_objs.erase(_objs.begin() + pos);
 	}
@@ -277,7 +291,7 @@ void ReadSceneObjectVisitor::visit(Ellipsoid* op, void* ret){
 
 // TODO: need to properly fill this out (if you want)
 void ReadSceneObjectVisitor::visit(Box* op, void* ret){
-	op->setCorner(readPt3(_stream)); //corner
+	op->setCenter(readPt3(_stream)); //corner
 	op->setLengthVec(readVec3(_stream)); //v1
 	op->setWidthVec(readVec3(_stream)); //v2
 	op->setHeightVec(readVec3(_stream)); //v3
@@ -356,7 +370,7 @@ void WriteSceneObjectVisitor::visit(Sphere* sphere, void* ret){
 
 void WriteSceneObjectVisitor::visit(Box* op, void* ret){
 	writeString(_stream,"box"); (*_stream)<<endl;
-	writePt3(_stream,op->getCorner()); 
+	writePt3(_stream,op->getCenter()); 
 	(*_stream)<<endl;
 	writeVec3(_stream,op->getLengthVec()); 
 	(*_stream)<<endl;

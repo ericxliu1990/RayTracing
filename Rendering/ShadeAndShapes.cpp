@@ -22,7 +22,7 @@ void Box::rotate(double d, int axis){
 	// first construct a rotation about x/y/z axis
 	std::auto_ptr<Mat4> m;
 	m =  GeometryUtils::getRotateMatrix(d, axis);
-	Vec3 cv = _corner - _center; 
+	// Vec3 cv = _corner - _center; 
 
 	// rotate the three linearly independent vectors that determine the shape
 	_lengthv = _lengthv * (*m);
@@ -30,7 +30,7 @@ void Box::rotate(double d, int axis){
 	_heightv = _heightv * (*m);
 
 	// rotation is about the center, so points that are not the center will also be rotated; 
-	_corner = _center + (cv * (*m)); 
+	// _corner = _center + (cv * (*m)); 
 
 	updateTransform(); 
 }
@@ -142,12 +142,12 @@ void Intersector::visit(Sphere* sphere, void* ret){
 // The transformation takes a unit shape into the shape described by the parameters.
 // This function also computes the inverse of the transformation.
 void Box::updateTransform(){
-	Vec3 ncenter = _corner; 
-	ncenter += _length/2 * _lengthv; 
-	ncenter += _width/2 * _widthv; 
-	ncenter += _height/2 * _heightv; 
-	_center = ncenter; 
-	_mat = compose(_lengthv * _length, _widthv * _width, _heightv * _height, _center);
+	// Vec3 ncenter = _corner; 
+	// ncenter += _length/2 * _lengthv; 
+	// ncenter += _width/2 * _widthv; 
+	// ncenter += _height/2 * _heightv; 
+	// _center = ncenter; 
+	_mat = compose(_lengthv * _length, _widthv * _width, _heightv * _height, _corner);
 	_imat = !_mat; 
 
 	Geometry::updateTransform(); // must call this at the end

@@ -232,7 +232,7 @@ void ZBufferVisitor::visit(Torus* op, void* ret){
 	glPushMatrix();
 	glMultMatrixf(op->getGLForwardMat()); 
 	glRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
-	glutSolidTorus(1.0f, 2.0f, 50, 50); 
+	glutSolidTorus(1.0f, 2.0f, 50, 50);
 	glPopMatrix();
 }
 
