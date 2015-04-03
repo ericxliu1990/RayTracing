@@ -487,8 +487,94 @@ void Torus::updateTransform() {
 	_imat = !_mat;
 	Geometry::updateTransform();
 }
-void Intersector::visit(Torus* op, void* ret){
 
+/* Implicit function for a canonical torus
+*/
+double T(Pt3 p){
+	double d = 2;
+	double a = 1;
+	double result = p[0]*p[0] + p[1]*p[1] + p[2]*p[2] - d*d - a*a;
+	result = result * result + 4 * d*d * p[1]*p[1] - 4 * a*a * d*d;
+	return result;
+}
+
+void Intersector::visit(Torus* op, void* ret){
+	IsectData* iret = (IsectData*) ret; 
+	iret->t0 = FINF32;
+	iret->hit = false;
+	
+	// Transform into canonical frame
+	// Note that the vector of the trasformed line is normalized
+	Pt3 np = _ray.p*op->getInverseMat(); 
+	Pt3 ppp = np*(1/np[3]); 
+	Vec3 vvv = _ray.dir*op->getInverseMat(); 
+	double sizev = mag(vvv);
+	vvv.normalize();
+	Ray ray(ppp,vvv); 
+
+	// First, fast reject using a sphere
+	Pt3 center = Vec3(0,0,0); 
+	double radius = 3; 
+
+	double closest = GeometryUtils::pointRayClosest(center,ray); 
+    Vec3 C2P = ray.at(closest) - center; 
+    double r2 = radius*radius; 
+	double d2 = C2P*C2P; 
+	double near, far;
+
+	if(d2 > r2 + EPS){
+        iret->hit = false; 
+		iret->t0 = 0; 
+		return;
+	}
+	else{
+		double h = sqrt(r2 - d2); 
+		if (closest+h<0){
+			iret->hit = false;
+			return;
+		} else if (closest-h<0.001){
+			far = closest + h;
+			near = 0;
+		} else {
+			near = closest - h; 
+			far = closest + h;
+		}
+	}
+
+	// Near is the starting point, and far is the ending point for interpolation
+	double n_itp = 20.0;
+	double T_prev = T(ray.at(near));
+	double T_curr;
+	for (int i=1; i<=n_itp; i++) {
+		double param = near+i*(far-near)/n_itp;
+		T_curr = T(ray.at(param));
+		if (T_curr*T_prev<0) {
+			int j;
+			for (j=1; j<=n_itp; j++) {
+				double newParam = param - (far-near)/n_itp + j*(far-near)/n_itp/n_itp;
+				T_curr = T(ray.at(newParam));
+				if (T_curr*T_prev<0) {
+					iret->hit = true;
+					iret->t0 = newParam - (far-near)/n_itp/n_itp;
+					Pt3 p = ray.at(iret->t0);
+					double G = p[0]*p[0] + p[1]*p[1] + p[2]*p[2] - 2*2 - 1*1;
+					iret->normal = Vec3(4*p[0]*G, 4*p[1]*(G + 2*2*2), 4*p[2]*G, 0);
+					iret->normal.normalize();
+					break;
+				}
+				T_prev = T_curr;
+			}
+			if (j<= n_itp) break;
+		}
+		T_prev = T_curr;
+	}
+
+
+	// In reality, the hit point t0 is adjusted for the size of vvv
+	iret->t0 /= sizev;
+	// In reality, the normal is adjusted to be in the right frame
+	iret->normal = iret->normal * transpose(op->getInverseMat());
+	iret->normal.normalize();
 }
 // The operator is the widget that allows you to translate and rotate a geometric object
 // It is colored as red/green/blue.  When one of the axis is highlighted, it is yellow.
